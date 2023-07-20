@@ -4,6 +4,7 @@ from tkinter import messagebox as mb    # importing the messagebox module from t
 from tkinter import filedialog as fd    # importing the filedialog module from tkinter  
 import os                               # importing the os module  
 import shutil                           # importing the shutil module  
+import psutil
   
 # ----------------- defining functions -----------------  
 # function to open a file  
@@ -215,6 +216,116 @@ def listFilesInFolder():
    the_listbox.insert(END, "")  
    the_listbox.insert(END, "Total Files: " + str(len(the_files)))  
   
+
+def get_size(start_path):
+    total_size = 0
+    for dirpath, dirnames, filenames in os.walk(start_path):
+        for f in filenames:
+            fp = os.path.join(dirpath, f)
+            # skip if it is symbolic link
+            if not os.path.islink(fp):
+                total_size += os.path.getsize(fp)
+
+    return total_size
+
+
+
+def free_space_on_disk():
+   root="/"
+    
+   ShowDiskUsageWindow = Toplevel(win_root)  
+   # specifying the title of the pop-up window  
+   ShowDiskUsageWindow.title(f'Your Disk Usage')  
+   # specifying the size and position of the window  
+   ShowDiskUsageWindow.geometry("300x500+300+200")  
+   # disabling the resizable option  
+   ShowDiskUsageWindow.resizable(1, 1)  
+   # setting the background color of the window to #EC2FB1  
+   ShowDiskUsageWindow.configure(bg = "#EC2FB1")  
+  
+   # creating a list box  
+   the_listbox = Listbox(  
+      ShowDiskUsageWindow,  
+      selectbackground = "#F24FBF",  
+      font = ("Verdana", "10"),  
+      background = "#FFCBEE"  
+      )  
+   # placing the list box on the window  
+   the_listbox.place(relx = 0, rely = 0, relheight = 1, relwidth = 1)  
+     
+   # creating a scroll bar  
+   the_scrollbar = Scrollbar(  
+      the_listbox,  
+      orient = VERTICAL,
+      command = the_listbox.yview  
+      )  
+   # placing the scroll bar to the right side of the window  
+   the_scrollbar.pack(side = RIGHT, fill = Y)  
+  
+   # setting the yscrollcommand parameter of the listbox's config() method to the scrollbar  
+   the_listbox.config(yscrollcommand = the_scrollbar.set)  
+
+   total,used,free=shutil.disk_usage(root)
+
+   total = total / (2**30)
+   used = used / (2**30)
+   free = free / (2**30)
+
+   the_listbox.insert(END,f"Total : {total} GB")
+   the_listbox.insert(END,f"Used : {used} GB")
+   the_listbox.insert(END,f"Free : {free} GB")
+
+   # total_used = get_size(root)
+   # the_listbox.insert(END, f"Total : {total_used / (2**30)} GB")
+
+
+def show_space_used():
+
+   the_path = fd.askdirectory(title = "Select Folder to check the size of") 
+
+   folder_space_usage=get_size(str(the_path))
+
+   folder_space_usage = (folder_space_usage / (10**9))
+   # print(the_path)
+   # print(folder_space_usage / (2**30))
+
+      
+   ShowFolderSpaceUsage = Toplevel(win_root)  
+   # specifying the title of the pop-up window  
+   ShowFolderSpaceUsage.title(f'Usage of {the_path}')  
+   # specifying the size and position of the window  
+   ShowFolderSpaceUsage.geometry("300x500+300+200")  
+   # disabling the resizable option  
+   ShowFolderSpaceUsage.resizable(1, 1)  
+   # setting the background color of the window to #EC2FB1  
+   ShowFolderSpaceUsage.configure(bg = "#EC2FB1")  
+  
+   # creating a list box  
+   the_listbox = Listbox(  
+      ShowFolderSpaceUsage,  
+      selectbackground = "#F24FBF",  
+      font = ("Verdana", "10"),  
+      background = "#FFCBEE"  
+      )  
+   # placing the list box on the window  
+   the_listbox.place(relx = 0, rely = 0, relheight = 1, relwidth = 1)  
+     
+   # creating a scroll bar  
+   the_scrollbar = Scrollbar(  
+      the_listbox,  
+      orient = VERTICAL,
+      command = the_listbox.yview  
+      )  
+   # placing the scroll bar to the right side of the window  
+   the_scrollbar.pack(side = RIGHT, fill = Y)  
+  
+   # setting the yscrollcommand parameter of the listbox's config() method to the scrollbar  
+   the_listbox.config(yscrollcommand = the_scrollbar.set)  
+
+   the_listbox.insert(END,f"Space Utilisation : {folder_space_usage} GB")
+
+
+
 # main function  
 if __name__ == "__main__":  
    # creating an object of the Tk() class  
@@ -222,7 +333,7 @@ if __name__ == "__main__":
    # setting the title of the main window  
    win_root.title("File Explorer - JAVATPOINT")  
    # set the size and position of the window  
-   win_root.geometry("300x500+650+250")  
+   win_root.geometry("500x600+650+250")  
    # disabling the resizable option  
    win_root.resizable(0, 0)  
    # setting the background color to #D8E9E6  
@@ -262,7 +373,33 @@ if __name__ == "__main__":
       activeforeground = "#D0FEF7",  
       command = openFile  
       )  
+   
+   disk_space_usage = Button(  
+      buttons_frame,  
+      text = "Check Disk Usage",  
+      font = ("verdana", "10"),  
+      width = 18,  
+      bg = "#6AD9C7",  
+      fg = "#000000",  
+      relief = GROOVE,  
+      activebackground = "#286F63",  
+      activeforeground = "#D0FEF7",  
+      command = free_space_on_disk  
+      )  
   
+   show_space_usage = Button(  
+      buttons_frame,  
+      text = "Check Folder's Space Usage",  
+      font = ("verdana", "10"),  
+      width = 18,  
+      bg = "#6AD9C7",  
+      fg = "#000000",  
+      relief = GROOVE,  
+      activebackground = "#286F63",  
+      activeforeground = "#D0FEF7",  
+      command = show_space_used 
+      )  
+   
    # copy button  
    copy_button = Button(  
       buttons_frame,  
@@ -370,6 +507,8 @@ if __name__ == "__main__":
    delete_folder_button.pack(pady = 8)  
    move_folder_button.pack(pady = 8)  
    list_button.pack(pady = 8)  
+   disk_space_usage.pack(pady=8)
+   show_space_usage.pack(pady=8)
   
    # creating an object of the StringVar() class  
    enteredFileName = StringVar()  
