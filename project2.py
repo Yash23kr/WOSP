@@ -628,9 +628,9 @@ if __name__ == "__main__":
    open_folder_button.pack(pady = 8)  
    delete_folder_button.pack(pady = 8)  
    move_folder_button.pack(pady = 8)  
-   list_button.pack(pady = 8)  
+   #list_button.pack(pady = 8)  
    detect_duplicate_button.pack(pady = 8)
-   #search_extension_button.pack(pady = 8)
+   search_extension_button.pack(pady = 8)
    search_largefile_button.pack(pady = 8)
    # creating an object of the StringVar() class  
    enteredFileName = StringVar()  
