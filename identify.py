@@ -2,6 +2,7 @@ import os
 import tkinter as tk
 from tkinter import filedialog, messagebox
 import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 def identify_file_types(directory):
     file_types = {}
@@ -15,6 +16,8 @@ def identify_file_types(directory):
             file_size = os.path.getsize(file_path)
             total_size += file_size
             file_extension = os.path.splitext(file)[1][1:].lower()
+            if(file_extension == ""):
+                file_extension = "Folder"
             file_types[file_extension] = file_types.get(file_extension, 0) + 1
             largest_files.append((file_path, file_size))
     largest_files.sort(key=lambda x: x[1], reverse=True)
@@ -47,15 +50,32 @@ def browse_directory():
         total_files_label.config(text="Total Files: " + str(total_files))
         total_size_label.config(text="Total Size: " + format_size(total_size))
 
-        # Create and display the bar graph
-        plt.bar(file_types.keys(), file_types.values())
-        plt.xlabel("File Types")
-        plt.ylabel("Number of Files")
-        plt.title("Number of Files of Different Types")
-        plt.xticks(rotation=45, ha='right')
-        plt.tight_layout()
-        plt.show()
+        #Create 2 figures: one bar graph and one pie chart (In different window)
+        #Bar graph for 10 largest values and others clubbed
+        file_types = dict(sorted(file_types.items(), key=lambda x: x[1], reverse=True))
+        file_types2 = file_types.copy()
+        file_types = dict(list(file_types.items())[:10])
 
+        file_types["Others"] = sum(list(file_types2.values())[10:])
+        fig1 = plt.figure(figsize=(5,5))
+        ax1 = fig1.add_subplot(111)
+        ax1.bar(file_types.keys(), file_types.values())
+        ax1.set_title("Number of Files per File Type")
+        fig1.show()
+
+        #Pie chart for 5 largest values and others clubbed
+        file_types = dict(sorted(file_types.items(), key=lambda x: x[1], reverse=True))
+        file_types2 = file_types.copy()
+        file_types = dict(list(file_types.items())[:5])
+        file_types["Others"] = sum(list(file_types2.values())[5:])
+        fig2 = plt.figure(figsize=(5,5))
+        ax2 = fig2.add_subplot(111)
+        ax2.pie(file_types.values(), labels=file_types.keys(), autopct='%1.1f%%')
+        ax2.set_title("Percentage of Files per File Type")
+        fig2.show()
+
+
+    
         # Display Largest Files
         largest_files_label.config(text="Largest Files:")
         largest_files_listbox.delete(0, tk.END)
