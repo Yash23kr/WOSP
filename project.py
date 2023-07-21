@@ -10,7 +10,6 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
 from tkinter import ttk
 import pandas
-  
 from pathlib import Path
 import hashlib
 import time
@@ -522,6 +521,68 @@ def detect_duplicate():
       the_listbox.insert(END, "")  
       the_listbox.insert(END, "Total Files: " + str(len(duplicates))) 
    
+def deleteDuplicates():
+   parent_folder = fd.askdirectory(title="Select a folder to search for duplicates")
+   file_list = os.walk(parent_folder)
+   hash_dictionary = dict()
+   duplicates = []
+   filepaths = []
+   for root, dirs, files in file_list:
+      for file in files:
+         file_path = Path(os.path.join(root,file))
+         hash = hashlib.md5(open(file_path,'rb').read()).hexdigest()
+         if hash in hash_dictionary.keys():
+            first = hash_dictionary[hash]
+            second = file_path
+            tic1 = time.ctime(os.path.getctime(first))
+            tic2 = time.ctime(os.path.getctime(second))
+            if(tic1 < tic2):
+               duplicates.append(first)
+               os.remove(first)
+               hash_dictionary[hash] = second
+            else:
+               duplicates.append(second)
+               os.remove(second)
+               hash_dictionary[hash] = first
+         else:
+            hash_dictionary[hash] = file_path
+   if len(duplicates) == 0:
+      mb.showinfo(title = "No duplicates found!", message = "No duplicates found in the selected folder.")
+   else:
+      # creating an object of Toplevel class  
+      listFilesWindow = Toplevel(win_root)  
+      listFilesWindow.title(f'Following duplicates deleted {parent_folder}')  
+      listFilesWindow.geometry("1000x300+300+200")    
+      listFilesWindow.resizable(0, 0)  
+      listFilesWindow.configure(bg = "#EC2FB1")  
+   
+      # creating a list box  
+      the_listbox = Listbox(  
+         listFilesWindow,  
+         selectbackground = "#F24FBF",  
+         font = ("Verdana", "10"),  
+         background = "#FFCBEE"  
+         )  
+      # placing the list box on the window  
+      the_listbox.place(relx = 0, rely = 0, relheight = 1, relwidth = 1)  
+      
+      #creating a scroll bar  
+      the_scrollbar = Scrollbar(  
+         the_listbox,  
+         orient = VERTICAL,  
+         command = the_listbox.yview  
+         )   
+      the_scrollbar.pack(side = RIGHT, fill = Y)  
+      the_listbox.config(yscrollcommand = the_scrollbar.set)  
+      i=0
+      while i < len(duplicates):    
+         the_listbox.insert(END, "[" + str(i+1) + "] " + str(duplicates[i])) 
+         #the_listbox.insert(END, "Original File: " + str(hash_dictionary[hashlib.md5(open(duplicates[i],'rb').read()).hexdigest()])) 
+         i += 1  
+      the_listbox.insert(END, "")  
+      the_listbox.insert(END, "Total Files: " + str(len(duplicates))) 
+
+
 def search_by_extension():  
    # creating another window  
    rename_window = Toplevel(win_root)   
@@ -1087,6 +1148,18 @@ if __name__ == "__main__":
         activeforeground = "#D0FEF7",
         command = select_extension
       )
+   delete_duplicates_button = Button(
+        buttons_frame,
+        text = "Delete Duplicates",
+        font = ("verdana", "10"),
+        width = 18,
+        bg = "#6AD9C7",
+        fg = "#000000",
+        relief = GROOVE,
+        activebackground = "#286F63",
+        activeforeground = "#D0FEF7",
+        command = deleteDuplicates
+      )
 
    # using the pack() method to place the buttons in the window  
    #open_button.pack(pady = 8)  
@@ -1106,6 +1179,7 @@ if __name__ == "__main__":
    search_largefile_button.pack(pady = 8)
    filtered_search_button.pack(pady = 8)
    delete_files_of_type_button.pack(pady = 8)
+   delete_duplicates_button.pack(pady = 8)
    # creating an object of the StringVar() class  
    enteredFileName = StringVar()  
    enteredExtension = StringVar()
