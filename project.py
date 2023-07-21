@@ -51,7 +51,78 @@ def copyFile():
          title = "Error!",  
          message = "Selected file is unable to copy to the selected location. Please try again!"  
          )  
-  
+#Function to generate insights on type of files and number of files of each type using os.scandir() method
+def generateInsightsUsingScandir(directory):
+    all_files = []
+    for entry in os.scandir(directory):
+        if entry.is_file():
+            all_files.append(entry.path)
+        elif entry.is_dir():
+            all_files.extend(generateInsightsUsingScandir(entry.path))
+    return all_files
+
+def generateInsights():
+    directory = fd.askdirectory(title="Select the folder to generate insights")
+    all_files = generateInsightsUsingScandir(directory)
+    
+    file_types = {}
+    files_sizes = {}
+    total_files = 0
+    total_size = 0
+    for file in all_files:
+        total_files += 1
+        total_size += os.path.getsize(file)
+        file_type = os.path.splitext(file)[1]
+        if file_type not in file_types.keys():
+            file_types[file_type] = 1
+            files_sizes[file_type] = os.path.getsize(file)
+        else:
+            files_sizes[file_type] += os.path.getsize(file)
+            file_types[file_type] += 1
+    #Generate bar graph using matplotlib and tkinter
+    file_types = dict(sorted(file_types.items(), key=lambda x: x[1], reverse=True))
+    file_types2 = file_types.copy()
+    file_types = dict(list(file_types.items())[:10])
+    file_types["Others"] = sum(list(file_types2.values())[10:])
+    
+    fig1 = plt.figure(figsize=(5,5))
+    ax1 = fig1.add_subplot(111)
+    ax1.bar(file_types.keys(), file_types.values())
+    ax1.set_title("Number of Files per File Type")
+    fig1.show()
+    print("Total number of files: ", total_files)
+    print("Total size of files: ", format_size(total_size))
+    print("File types and number of files of each type: ")
+
+
+    files_sizes = dict(sorted(files_sizes.items(), key=lambda x: x[1], reverse=True))
+    file_types2 = files_sizes.copy()
+    if len(list(files_sizes.values())) > 5:
+      files_sizes = dict(list(files_sizes.items())[:5])
+      files_sizes["Others"] = sum(list(file_types2.values())[5:])
+    
+    fig2 = plt.figure(figsize=(5,5))
+    ax2 = fig2.add_subplot(111)
+    ax2.pie(files_sizes.values(), labels=files_sizes.keys(), autopct='%1.1f%%')
+    ax2.set_title("Percentage of Files by Size")
+    fig2.show()
+
+    display_text = ""
+    for file_type, number_of_files in file_types.items():
+        display_text = display_text + "\n" + file_type + ": " + str(number_of_files)
+    # using the showinfo() method to display success message
+
+    mb.showinfo(
+        title = "Insights generated!",
+        message = "Total number of files: " + str(total_files) + "\n" + "Total size of files: " + str(format_size(total_size)) + " bytes" + "\n" + "File types and number of files of each type: " + "\n" + str(display_text)
+    )
+    
+
+def format_size(size):
+    for unit in ['B', 'KB', 'MB', 'GB', 'TB']:
+        if size < 1024.0:
+            return f"{size:.1f} {unit}"
+        size /= 1024.0 
 # function to delete a file  
 def deleteFile():  
    # selecting the file using the filedialog's askopenfilename() method  
@@ -646,7 +717,7 @@ def filteredSearch():
       )  
    # placing the button on the window  
    submitButton.pack(pady = 2)  
-  
+   
 # defining a function get the file path  
 def getFolder():  
    # selecting the file using the filedialog's askopenfilename() method  
@@ -1005,7 +1076,19 @@ if __name__ == "__main__":
       activebackground = "#286F63",  
       activeforeground = "#D0FEF7",  
       command =  filteredSearch
-      ) 
+      )
+   generate_insights_button = Button(
+        buttons_frame,
+        text = "Generate Insights",
+        font = ("verdana", "10"),
+        width = 18,
+        bg = "#6AD9C7",
+        fg = "#000000",
+        relief = GROOVE,
+        activebackground = "#286F63",
+        activeforeground = "#D0FEF7",
+        command = generateInsights
+    )
    # using the pack() method to place the buttons in the window  
    #open_button.pack(pady = 8)  
    copy_button.pack(pady = 8)  
@@ -1019,6 +1102,7 @@ if __name__ == "__main__":
    show_space_usage.pack(pady=8)
    least_access.pack(pady=8)
    detect_duplicate_button.pack(pady = 8)
+   generate_insights_button.pack(pady = 8)
    search_extension_button.pack(pady = 8)
    search_largefile_button.pack(pady = 8)
    filtered_search_button.pack(pady = 8)
