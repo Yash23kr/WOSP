@@ -465,7 +465,7 @@ def detect_duplicate():
          listFilesWindow,  
          selectbackground = "#F24FBF",  
          font = ("Verdana", "10"),  
-         background = "#FFCBEE"  
+         background = "#FCFFB2"  
          )  
       # placing the list box on the window  
       the_listbox.place(relx = 0, rely = 0, relheight = 1, relwidth = 1)  
@@ -526,7 +526,7 @@ def deleteDuplicates():
          listFilesWindow,  
          selectbackground = "#F24FBF",  
          font = ("Verdana", "10"),  
-         background = "#FFCBEE"  
+         background = "#FCFFB2"  
          )  
       # placing the list box on the window  
       the_listbox.place(relx = 0, rely = 0, relheight = 1, relwidth = 1)  
@@ -617,7 +617,7 @@ def submitName2():
          listFilesWindow,  
          selectbackground = "#F24FBF",  
          font = ("Verdana", "10"),  
-         background = "#FFCBEE"  
+         background = "#FCFFB2"  
          )  
       the_listbox.place(relx = 0, rely = 0, relheight = 1, relwidth = 1)  
       
@@ -658,7 +658,7 @@ def searchLargeFiles():
          listFilesWindow,  
          selectbackground = "#F24FBF",  
          font = ("Verdana", "10"),  
-         background = "#FFCBEE"  
+         background = "#FCFFB2"  
          )   
       the_listbox.place(relx = 0, rely = 0, relheight = 1, relwidth = 1)  
       
@@ -785,7 +785,7 @@ def submitName3():
          listFilesWindow,  
          selectbackground = "#F24FBF",  
          font = ("Verdana", "10"),  
-         background = "#FFCBEE"  
+         background = "#FCFFB2"  
          )   
       the_listbox.place(relx = 0, rely = 0, relheight = 1, relwidth = 1)  
       
@@ -872,11 +872,11 @@ if __name__ == "__main__":
    width = win_root.winfo_screenwidth()  # Getting the height and width of the screen
    height = win_root.winfo_screenheight() 
    win_root.geometry("%dx%d" % (725, height/1.7))  # Opening the window in full screen 
-   win_root.configure(bg = "#b7f9c9")  
+   win_root.configure(bg = "#b2ffff")  
   
    # creating the frames using the Frame() widget  
-   header_frame = Frame(win_root, bg = "#b7f9c9")  
-   buttons_frame = Frame(win_root, bg = "#b7f9c9")  
+   header_frame = Frame(win_root, bg = "#b2ffff")  
+   buttons_frame = Frame(win_root, bg = "#b2ffff")  
   
    # using the pack() method to place the frames in the window  
    header_frame.pack(fill = "both")  
@@ -887,7 +887,7 @@ if __name__ == "__main__":
       header_frame,  
       text = "File Manager",  
       font = ("verdana", "16"),  
-      bg = "#b7f9c9",  
+      bg = "#b2ffff",  
       fg = "#1A3C37"  
       )  
   
