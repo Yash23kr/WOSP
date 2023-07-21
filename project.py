@@ -552,7 +552,7 @@ def search_by_extension():
    # creating another window  
    rename_window = Toplevel(win_root)   
    rename_window.title("Extension")    
-   rename_window.geometry("1000x300+300+250")  
+   rename_window.geometry("300x300+300+250")  
    rename_window.resizable(0, 0)  
    rename_window.configure(bg = "#F6EAD7")  
    rename_label = Label(  
