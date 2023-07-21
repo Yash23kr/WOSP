@@ -429,13 +429,9 @@ def show_space_used():
 
       
    ShowFolderSpaceUsage = Toplevel(win_root)  
-   # specifying the title of the pop-up window  
    ShowFolderSpaceUsage.title(f'Usage of {the_path}')  
-   # specifying the size and position of the window  
    ShowFolderSpaceUsage.geometry("300x500+300+200")  
-   # disabling the resizable option  
    ShowFolderSpaceUsage.resizable(1, 1)  
-   # setting the background color of the window to #EC2FB1  
    ShowFolderSpaceUsage.configure(bg = "#EC2FB1")  
   
    # creating a list box  
@@ -468,6 +464,7 @@ def detect_duplicate():
    hash_dictionary = dict()
    duplicates = []
    filepaths = []
+
    for root, dirs, files in file_list:
       for file in files:
          file_path = Path(os.path.join(root,file))
@@ -516,9 +513,11 @@ def detect_duplicate():
       i=0
       while i < len(duplicates):    
          the_listbox.insert(END, "[" + str(i+1) + "] " + str(duplicates[i])) 
-         the_listbox.insert(END, "Original File: " + str(hash_dictionary[hashlib.md5(open(duplicates[i],'rb').read()).hexdigest()])) 
+         if i == len(duplicates) - 1:
+            the_listbox.insert(END, "") 
+            the_listbox.insert(END, "Original File: " + str(hash_dictionary[hashlib.md5(open(duplicates[i],'rb').read()).hexdigest()])) 
          i += 1  
-      the_listbox.insert(END, "")  
+       
       the_listbox.insert(END, "Total Files: " + str(len(duplicates))) 
    
 def deleteDuplicates():
@@ -901,6 +900,7 @@ if __name__ == "__main__":
    # set the size and position of the window  
    win_root.geometry("500x700+650+250")  
    # disabling the resizable option  
+   
    win_root.resizable(0, 0)  
    # setting the background color to #D8E9E6  
    win_root.configure(bg = "#D8E9E6")  
@@ -931,7 +931,7 @@ if __name__ == "__main__":
       buttons_frame,  
       text = "Open a File",  
       font = ("verdana", "10"),  
-      width = 18,  
+      width = 28,  
       bg = "#6AD9C7",  
       fg = "#000000",  
       relief = GROOVE,  
@@ -944,7 +944,7 @@ if __name__ == "__main__":
       buttons_frame,  
       text = "Check Disk Usage",  
       font = ("verdana", "10"),  
-      width = 18,  
+      width = 28,  
       bg = "#6AD9C7",  
       fg = "#000000",  
       relief = GROOVE,  
@@ -957,7 +957,7 @@ if __name__ == "__main__":
       buttons_frame,  
       text = "Check Folder's Space Usage",  
       font = ("verdana", "10"),  
-      width = 18,  
+      width = 28,  
       bg = "#6AD9C7",  
       fg = "#000000",  
       relief = GROOVE,  
@@ -969,7 +969,7 @@ if __name__ == "__main__":
       buttons_frame,  
       text = "Check least accessed files",  
       font = ("verdana", "10"),  
-      width = 18,  
+      width = 28,  
       bg = "#6AD9C7",  
       fg = "#000000",  
       relief = GROOVE,  
@@ -983,7 +983,7 @@ if __name__ == "__main__":
       buttons_frame,  
       text = "Copy a File",  
       font = ("verdana", "10"),  
-      width = 18,  
+      width = 28,  
       bg = "#6AD9C7",  
       fg = "#000000",  
       relief = GROOVE,  
@@ -997,7 +997,7 @@ if __name__ == "__main__":
       buttons_frame,  
       text = "Delete a File",  
       font = ("verdana", "10"),  
-      width = 18,  
+      width = 28,  
       bg = "#6AD9C7",  
       fg = "#000000",  
       relief = GROOVE,  
@@ -1011,7 +1011,7 @@ if __name__ == "__main__":
       buttons_frame,  
       text = "Rename a File",  
       font = ("verdana", "10"),  
-      width = 18,  
+      width = 28,  
       bg = "#6AD9C7",  
       fg = "#000000",  
       relief = GROOVE,  
@@ -1025,7 +1025,7 @@ if __name__ == "__main__":
       buttons_frame,  
       text = "Open a Folder",  
       font = ("verdana", "10"),  
-      width = 18,  
+      width = 28,  
       bg = "#6AD9C7",  
       fg = "#000000",  
       relief = GROOVE,  
@@ -1039,7 +1039,7 @@ if __name__ == "__main__":
       buttons_frame,  
       text = "Delete a Folder",  
       font = ("verdana", "10"),  
-      width = 18,  
+      width = 28,  
       bg = "#6AD9C7",  
       fg = "#000000",  
       relief = GROOVE,  
@@ -1053,7 +1053,7 @@ if __name__ == "__main__":
       buttons_frame,  
       text = "Move a Folder",  
       font = ("verdana", "10"),  
-      width = 18,  
+      width = 28,  
       bg = "#6AD9C7",  
       fg = "#000000",  
       relief = GROOVE,  
@@ -1067,7 +1067,7 @@ if __name__ == "__main__":
       buttons_frame,  
       text = "List all files in Folder",  
       font = ("verdana", "10"),  
-      width = 18,  
+      width = 28,  
       bg = "#6AD9C7",  
       fg = "#000000",  
       relief = GROOVE,  
@@ -1079,7 +1079,7 @@ if __name__ == "__main__":
       buttons_frame,  
       text = "Duplicates in Folder",  
       font = ("verdana", "10"),  
-      width = 18,  
+      width = 28,  
       bg = "#6AD9C7",  
       fg = "#000000",  
       relief = GROOVE,  
@@ -1092,7 +1092,7 @@ if __name__ == "__main__":
       buttons_frame,  
       text = "Search by Extension",  
       font = ("verdana", "10"),  
-      width = 18,  
+      width = 28,  
       bg = "#6AD9C7",  
       fg = "#000000",  
       relief = GROOVE,  
@@ -1104,7 +1104,7 @@ if __name__ == "__main__":
       buttons_frame,  
       text = "List Large Files",  
       font = ("verdana", "10"),  
-      width = 18,  
+      width = 28,  
       bg = "#6AD9C7",  
       fg = "#000000",  
       relief = GROOVE,  
@@ -1116,7 +1116,7 @@ if __name__ == "__main__":
       buttons_frame,  
       text = "Filtered Search",  
       font = ("verdana", "10"),  
-      width = 18,  
+      width = 28,  
       bg = "#6AD9C7",  
       fg = "#000000",  
       relief = GROOVE,  
@@ -1128,7 +1128,7 @@ if __name__ == "__main__":
         buttons_frame,
         text = "Generate Insights",
         font = ("verdana", "10"),
-        width = 18,
+        width = 28,
         bg = "#6AD9C7",
         fg = "#000000",
         relief = GROOVE,
@@ -1140,7 +1140,7 @@ if __name__ == "__main__":
         buttons_frame,
         text = "Delete Files of Type",
         font = ("verdana", "10"),
-        width = 18,
+        width = 28,
         bg = "#6AD9C7",
         fg = "#000000",
         relief = GROOVE,
@@ -1152,7 +1152,7 @@ if __name__ == "__main__":
         buttons_frame,
         text = "Delete Duplicates",
         font = ("verdana", "10"),
-        width = 18,
+        width = 28,
         bg = "#6AD9C7",
         fg = "#000000",
         relief = GROOVE,
