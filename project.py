@@ -7,6 +7,7 @@ import shutil                           # importing the shutil module
 import subprocess
 from pathlib import Path
 import hashlib
+import time
 # ----------------- defining functions -----------------  
 # function to open a file  
 def openFile():  
@@ -330,8 +331,16 @@ def detect_duplicate():
          file_path = Path(os.path.join(root,file))
          hash = hashlib.md5(open(file_path,'rb').read()).hexdigest()
          if hash in hash_dictionary.keys():
-            duplicates.append(file)
-            filepaths.append(file_path)
+            first = hash_dictionary[hash]
+            second = file_path
+            tic1 = time.ctime(os.path.getctime(first))
+            tic2 = time.ctime(os.path.getctime(second))
+            if(tic1 < tic2):
+               duplicates.append(first)
+               hash_dictionary[hash] = second
+            else:
+               duplicates.append(second)
+               hash_dictionary[hash] = first
          else:
             hash_dictionary[hash] = file_path
    # creating an object of Toplevel class  
