@@ -324,13 +324,14 @@ def detect_duplicate():
    file_list = os.walk(parent_folder)
    hash_dictionary = dict()
    duplicates = []
+   filepaths = []
    for root, dirs, files in file_list:
       for file in files:
          file_path = Path(os.path.join(root,file))
          hash = hashlib.md5(open(file_path,'rb').read()).hexdigest()
          if hash in hash_dictionary.keys():
-            duplicates.append(file_path)
-            print(file_path)
+            duplicates.append(file)
+            filepaths.append(file_path)
          else:
             hash_dictionary[hash] = file_path
    # creating an object of Toplevel class  
@@ -338,7 +339,7 @@ def detect_duplicate():
    # specifying the title of the pop-up window  
    listFilesWindow.title(f'Duplicates in {parent_folder}')  
    # specifying the size and position of the window  
-   listFilesWindow.geometry("300x2000+300+200")  
+   listFilesWindow.geometry("1000x300+300+200")  
    # disabling the resizable option  
    listFilesWindow.resizable(0, 0)  
    # setting the background color of the window to #EC2FB1  
@@ -369,7 +370,8 @@ def detect_duplicate():
    # iterating through the files in the folder  
    while i < len(duplicates):  
       # using the insert() method to insert the file details in the list box  
-      the_listbox.insert(END, "[" + str(i+1) + "] " + str(duplicates[i]))  
+      the_listbox.insert(END, "[" + str(i+1) + "] " + str(duplicates[i]) + " (path: " + str(filepaths[i]) + ")") 
+      the_listbox.insert(END, "Original File: " + str(hash_dictionary[hashlib.md5(open(filepaths[i],'rb').read()).hexdigest()])) 
       i += 1  
    the_listbox.insert(END, "")  
    the_listbox.insert(END, "Total Files: " + str(len(duplicates))) 
@@ -443,17 +445,19 @@ def submitName2():
    folder = getFolder()  
    walker = os.walk(folder)
    res = []
+   filepaths = []
    for root, dirs, files in walker:
       for file in files:
          if file.endswith(renameName):
             res.append(file)
-   print(res)
+            filepaths.append(Path(os.path.join(root,file)))
+   #print(res)
    # creating an object of Toplevel class  
    listFilesWindow = Toplevel(win_root)  
    # specifying the title of the pop-up window  
    listFilesWindow.title(f'Duplicates in {folder}')  
    # specifying the size and position of the window  
-   listFilesWindow.geometry("300x2000+300+200")  
+   listFilesWindow.geometry("1000x300+300+200")  
    # disabling the resizable option  
    listFilesWindow.resizable(0, 0)  
    # setting the background color of the window to #EC2FB1  
@@ -483,7 +487,7 @@ def submitName2():
    # iterating through the files in the folder  
    while i < len(res):  
       # using the insert() method to insert the file details in the list box  
-      the_listbox.insert(END, "[" + str(i+1) + "] " + str(res[i]))  
+      the_listbox.insert(END, "[" + str(i+1) + "] " + str(res[i]) + " (path: " + str(filepaths[i]) + ")")  
       i += 1  
    the_listbox.insert(END, "")  
    the_listbox.insert(END, "Total Files: " + str(len(res))) 
@@ -911,9 +915,9 @@ if __name__ == "__main__":
       command =  filteredSearch
       ) 
    # using the pack() method to place the buttons in the window  
-   open_button.pack(pady = 8)  
+   #open_button.pack(pady = 8)  
    copy_button.pack(pady = 8)  
-   delete_button.pack(pady = 8)  
+   #delete_button.pack(pady = 8)  
    rename_button.pack(pady = 8)  
    open_folder_button.pack(pady = 8)  
    delete_folder_button.pack(pady = 8)  
