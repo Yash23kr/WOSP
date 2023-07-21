@@ -899,15 +899,17 @@ if __name__ == "__main__":
    # setting the title of the main window  
    win_root.title("Wizard Of Systems Programming")  
    # set the size and position of the window  
-   win_root.geometry("500x700+650+250")  
+   #win_root.geometry("500x700+650+250")  
    # disabling the resizable option  
-   win_root.resizable(0, 0)  
-   # setting the background color to #D8E9E6  
-   win_root.configure(bg = "#D8E9E6")  
+   win_root.resizable(0, 0) 
+   width = win_root.winfo_screenwidth()  # Getting the height and width of the screen
+   height = win_root.winfo_screenheight() 
+   win_root.geometry("%dx%d" % (725, height/1.7))  # Opening the window in full screen 
+   win_root.configure(bg = "#b7f9c9")  
   
    # creating the frames using the Frame() widget  
-   header_frame = Frame(win_root, bg = "#D8E9E6")  
-   buttons_frame = Frame(win_root, bg = "#D8E9E6")  
+   header_frame = Frame(win_root, bg = "#b7f9c9")  
+   buttons_frame = Frame(win_root, bg = "#b7f9c9")  
   
    # using the pack() method to place the frames in the window  
    header_frame.pack(fill = "both")  
@@ -916,9 +918,9 @@ if __name__ == "__main__":
    # creating a label using the Label() widget  
    header_label = Label(  
       header_frame,  
-      text = "File Explorer",  
+      text = "File Manager",  
       font = ("verdana", "16"),  
-      bg = "#D8E9E6",  
+      bg = "#b7f9c9",  
       fg = "#1A3C37"  
       )  
   
@@ -931,7 +933,7 @@ if __name__ == "__main__":
       buttons_frame,  
       text = "Open a File",  
       font = ("verdana", "10"),  
-      width = 18,  
+      width = 26,  
       bg = "#6AD9C7",  
       fg = "#000000",  
       relief = GROOVE,  
@@ -944,7 +946,7 @@ if __name__ == "__main__":
       buttons_frame,  
       text = "Check Disk Usage",  
       font = ("verdana", "10"),  
-      width = 18,  
+      width = 26,  
       bg = "#6AD9C7",  
       fg = "#000000",  
       relief = GROOVE,  
@@ -957,7 +959,7 @@ if __name__ == "__main__":
       buttons_frame,  
       text = "Check Folder's Space Usage",  
       font = ("verdana", "10"),  
-      width = 18,  
+      width = 26,  
       bg = "#6AD9C7",  
       fg = "#000000",  
       relief = GROOVE,  
@@ -969,7 +971,7 @@ if __name__ == "__main__":
       buttons_frame,  
       text = "Check least accessed files",  
       font = ("verdana", "10"),  
-      width = 18,  
+      width = 26,  
       bg = "#6AD9C7",  
       fg = "#000000",  
       relief = GROOVE,  
@@ -983,7 +985,7 @@ if __name__ == "__main__":
       buttons_frame,  
       text = "Copy a File",  
       font = ("verdana", "10"),  
-      width = 18,  
+      width = 26,  
       bg = "#6AD9C7",  
       fg = "#000000",  
       relief = GROOVE,  
@@ -997,7 +999,7 @@ if __name__ == "__main__":
       buttons_frame,  
       text = "Delete a File",  
       font = ("verdana", "10"),  
-      width = 18,  
+      width = 26,  
       bg = "#6AD9C7",  
       fg = "#000000",  
       relief = GROOVE,  
@@ -1011,7 +1013,7 @@ if __name__ == "__main__":
       buttons_frame,  
       text = "Rename a File",  
       font = ("verdana", "10"),  
-      width = 18,  
+      width = 26,  
       bg = "#6AD9C7",  
       fg = "#000000",  
       relief = GROOVE,  
@@ -1025,7 +1027,7 @@ if __name__ == "__main__":
       buttons_frame,  
       text = "Open a Folder",  
       font = ("verdana", "10"),  
-      width = 18,  
+      width = 26,  
       bg = "#6AD9C7",  
       fg = "#000000",  
       relief = GROOVE,  
@@ -1039,7 +1041,7 @@ if __name__ == "__main__":
       buttons_frame,  
       text = "Delete a Folder",  
       font = ("verdana", "10"),  
-      width = 18,  
+      width = 26,  
       bg = "#6AD9C7",  
       fg = "#000000",  
       relief = GROOVE,  
@@ -1053,7 +1055,7 @@ if __name__ == "__main__":
       buttons_frame,  
       text = "Move a Folder",  
       font = ("verdana", "10"),  
-      width = 18,  
+      width = 26,  
       bg = "#6AD9C7",  
       fg = "#000000",  
       relief = GROOVE,  
@@ -1067,7 +1069,7 @@ if __name__ == "__main__":
       buttons_frame,  
       text = "List all files in Folder",  
       font = ("verdana", "10"),  
-      width = 18,  
+      width = 26,  
       bg = "#6AD9C7",  
       fg = "#000000",  
       relief = GROOVE,  
@@ -1079,7 +1081,7 @@ if __name__ == "__main__":
       buttons_frame,  
       text = "Duplicates in Folder",  
       font = ("verdana", "10"),  
-      width = 18,  
+      width = 26,  
       bg = "#6AD9C7",  
       fg = "#000000",  
       relief = GROOVE,  
@@ -1092,7 +1094,7 @@ if __name__ == "__main__":
       buttons_frame,  
       text = "Search by Extension",  
       font = ("verdana", "10"),  
-      width = 18,  
+      width = 26,  
       bg = "#6AD9C7",  
       fg = "#000000",  
       relief = GROOVE,  
@@ -1104,7 +1106,7 @@ if __name__ == "__main__":
       buttons_frame,  
       text = "List Large Files",  
       font = ("verdana", "10"),  
-      width = 18,  
+      width = 26,  
       bg = "#6AD9C7",  
       fg = "#000000",  
       relief = GROOVE,  
@@ -1116,7 +1118,7 @@ if __name__ == "__main__":
       buttons_frame,  
       text = "Filtered Search",  
       font = ("verdana", "10"),  
-      width = 18,  
+      width = 26,  
       bg = "#6AD9C7",  
       fg = "#000000",  
       relief = GROOVE,  
@@ -1128,7 +1130,7 @@ if __name__ == "__main__":
         buttons_frame,
         text = "Generate Insights",
         font = ("verdana", "10"),
-        width = 18,
+        width = 26,
         bg = "#6AD9C7",
         fg = "#000000",
         relief = GROOVE,
@@ -1140,7 +1142,7 @@ if __name__ == "__main__":
         buttons_frame,
         text = "Delete Files of Type",
         font = ("verdana", "10"),
-        width = 18,
+        width = 26,
         bg = "#6AD9C7",
         fg = "#000000",
         relief = GROOVE,
@@ -1152,7 +1154,7 @@ if __name__ == "__main__":
         buttons_frame,
         text = "Delete Duplicates",
         font = ("verdana", "10"),
-        width = 18,
+        width = 26,
         bg = "#6AD9C7",
         fg = "#000000",
         relief = GROOVE,
@@ -1169,17 +1171,17 @@ if __name__ == "__main__":
    # open_folder_button.pack(pady = 8)  
    # delete_folder_button.pack(pady = 8)  
    # move_folder_button.pack(pady = 8)  
-   list_button.pack(pady = 8)  
-   disk_space_usage.pack(pady=8)
-   show_space_usage.pack(pady=8)
-   least_access.pack(pady=8)
-   detect_duplicate_button.pack(pady = 8)
-   generate_insights_button.pack(pady = 8)
-   search_extension_button.pack(pady = 8)
-   search_largefile_button.pack(pady = 8)
-   filtered_search_button.pack(pady = 8)
-   delete_files_of_type_button.pack(pady = 8)
-   delete_duplicates_button.pack(pady = 8)
+   list_button.grid(row=0,column=0,padx=3,pady = 5)  
+   disk_space_usage.grid(row=0,column=1,padx=3,pady=5)
+   show_space_usage.grid(row=0,column=2,padx=3,pady=5)
+   least_access.grid(row=1,column=0,padx=3,pady=5)
+   detect_duplicate_button.grid(row=1,column=1,padx=3,pady = 5)
+   generate_insights_button.grid(row=1,column=2,padx=3,pady = 5)
+   search_extension_button.grid(row=2,column=0,padx=3,pady = 5)
+   search_largefile_button.grid(row=2,column=1,padx=3,pady = 5)
+   filtered_search_button.grid(row=2,column=2,padx=3,pady = 5)
+   delete_files_of_type_button.grid(row=3,column=0,padx=15,pady = 5)
+   delete_duplicates_button.grid(row=3,column=2,padx=15,pady = 5)
    # creating an object of the StringVar() class  
    enteredFileName = StringVar()  
    enteredExtension = StringVar()
