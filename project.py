@@ -247,53 +247,35 @@ def moveFolder():
   
 # defining a function to list all the files available in a folder  
 def listFilesInFolder():  
-   # declaring a variable with initial value 0  
-   i = 0  
-   # using the askdirectory() method to select the folder  
-   the_folder = fd.askdirectory(title = "Select the Folder")  
-   # using the listdir() method to list all the files in the directory  
-   the_files = os.listdir(os.path.abspath(the_folder))  
-  
-   # creating an object of Toplevel class  
-   listFilesWindow = Toplevel(win_root)  
-   # specifying the title of the pop-up window  
-   listFilesWindow.title(f'Files in {the_folder}')  
-   # specifying the size and position of the window  
-   listFilesWindow.geometry("300x500+300+200")  
-   # disabling the resizable option  
-   listFilesWindow.resizable(0, 0)  
-   # setting the background color of the window to #EC2FB1  
-   listFilesWindow.configure(bg = "#EC2FB1")  
-  
-   # creating a list box  
+   i = 0    
+   the_folder = fd.askdirectory(title = "Select the Folder")   
+   walker = os.walk(the_folder)
+   listFilesWindow = Toplevel(win_root)   
+   listFilesWindow.title(f'Files in {the_folder}')   
+   listFilesWindow.geometry("1000x300+300+200")  
+   listFilesWindow.resizable(0, 0)    
+   listFilesWindow.configure(bg = "#EC2FB1")   
    the_listbox = Listbox(  
       listFilesWindow,  
       selectbackground = "#F24FBF",  
       font = ("Verdana", "10"),  
       background = "#FFCBEE"  
-      )  
-   # placing the list box on the window  
-   the_listbox.place(relx = 0, rely = 0, relheight = 1, relwidth = 1)  
-     
-   # creating a scroll bar  
+      )    
+   the_listbox.place(relx = 0, rely = 0, relheight = 1, relwidth = 1)    
    the_scrollbar = Scrollbar(  
       the_listbox,  
       orient = VERTICAL,  
       command = the_listbox.yview  
       )  
-   # placing the scroll bar to the right side of the window  
-   the_scrollbar.pack(side = RIGHT, fill = Y)  
-  
-   # setting the yscrollcommand parameter of the listbox's config() method to the scrollbar  
+   the_scrollbar.pack(side = RIGHT, fill = Y)    
    the_listbox.config(yscrollcommand = the_scrollbar.set)  
-  
-   # iterating through the files in the folder  
-   while i < len(the_files):  
-      # using the insert() method to insert the file details in the list box  
-      the_listbox.insert(END, "[" + str(i+1) + "] " + the_files[i])  
-      i += 1  
+   i=0
+   for root,dir,files in walker:
+      for file in files:
+         the_listbox.insert(END, "[" + str(i+1) + "]" + str(file) + " (path: " + str(Path(os.path.join(root,file)))) 
+         i+=1
    the_listbox.insert(END, "")  
-   the_listbox.insert(END, "Total Files: " + str(len(the_files)))  
+   the_listbox.insert(END, "Total Files: " + str(i))  
 
 
 
