@@ -228,7 +228,16 @@ def detect_duplicate():
          file_path = Path(os.path.join(root,file))
          hash = hashlib.md5(open(file_path,'rb').read()).hexdigest()
          if hash in hash_dictionary.keys():
-            duplicates.append(file_path)
+            first = hash_dictionary[hash]
+            second = file_path
+            tic1 = time.ctime(os.path.getctime(first))
+            tic2 = time.ctime(os.path.getctime(second))
+            if(tic1 < tic2):
+               duplicates.append(first)
+               hash_dictionary[hash] = second
+            else:
+               duplicates.append(second)
+               hash_dictionary[hash] = first
             print(file_path)
          else:
             hash_dictionary[hash] = file_path

@@ -13,6 +13,7 @@ import pandas
   
 from pathlib import Path
 import hashlib
+import time
 # ----------------- defining functions -----------------  
 # function to open a file  
 def openFile():  
@@ -352,8 +353,16 @@ def detect_duplicate():
          file_path = Path(os.path.join(root,file))
          hash = hashlib.md5(open(file_path,'rb').read()).hexdigest()
          if hash in hash_dictionary.keys():
-            duplicates.append(file)
-            filepaths.append(file_path)
+            first = hash_dictionary[hash]
+            second = file_path
+            tic1 = time.ctime(os.path.getctime(first))
+            tic2 = time.ctime(os.path.getctime(second))
+            if(tic1 < tic2):
+               duplicates.append(first)
+               hash_dictionary[hash] = second
+            else:
+               duplicates.append(second)
+               hash_dictionary[hash] = first
          else:
             hash_dictionary[hash] = file_path
    # creating an object of Toplevel class  
@@ -392,8 +401,8 @@ def detect_duplicate():
    # iterating through the files in the folder  
    while i < len(duplicates):  
       # using the insert() method to insert the file details in the list box  
-      the_listbox.insert(END, "[" + str(i+1) + "] " + str(duplicates[i]) + " (path: " + str(filepaths[i]) + ")") 
-      the_listbox.insert(END, "Original File: " + str(hash_dictionary[hashlib.md5(open(filepaths[i],'rb').read()).hexdigest()])) 
+      the_listbox.insert(END, "[" + str(i+1) + "] " + str(duplicates[i])) 
+      the_listbox.insert(END, "Original File: " + str(hash_dictionary[hashlib.md5(open(duplicates[i],'rb').read()).hexdigest()])) 
       i += 1  
    the_listbox.insert(END, "")  
    the_listbox.insert(END, "Total Files: " + str(len(duplicates))) 
