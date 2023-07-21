@@ -335,7 +335,7 @@ def listFilesInFolder():
       listFilesWindow,  
       selectbackground = "#F24FBF",  
       font = ("Verdana", "10"),  
-      background = "#FFCBEE"  
+      background = "#FCFFB2"  
       )    
    the_listbox.place(relx = 0, rely = 0, relheight = 1, relwidth = 1)    
    the_scrollbar = Scrollbar(  
