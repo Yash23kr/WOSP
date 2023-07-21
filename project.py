@@ -338,7 +338,7 @@ def detect_duplicate():
    # specifying the title of the pop-up window  
    listFilesWindow.title(f'Duplicates in {parent_folder}')  
    # specifying the size and position of the window  
-   listFilesWindow.geometry("300x500+300+200")  
+   listFilesWindow.geometry("300x2000+300+200")  
    # disabling the resizable option  
    listFilesWindow.resizable(0, 0)  
    # setting the background color of the window to #EC2FB1  
@@ -378,7 +378,7 @@ def search_by_extension():
    # creating another window  
    rename_window = Toplevel(win_root)  
    # setting the title  
-   rename_window.title("Rename File")  
+   rename_window.title("Extension")  
    # setting the size and position of the window  
    rename_window.geometry("300x100+300+250")  
    # disabling the resizable option  
@@ -389,7 +389,7 @@ def search_by_extension():
    # creating a label  
    rename_label = Label(  
       rename_window,  
-      text = "Enter the extension name:",  
+      text = "Enter the extension:",  
       font = ("verdana", "8"),  
       bg = "#F6EAD7",  
       fg = "#000000"  
@@ -401,7 +401,7 @@ def search_by_extension():
    rename_field = Entry(  
       rename_window,  
       width = 26,  
-      textvariable = enteredFileName,  
+      textvariable = enteredExtension,  
       relief = GROOVE,  
       font = ("verdana", "10"),  
       bg = "#FFFFFF",  
@@ -436,7 +436,7 @@ def getFolder():
 # defining a function that will be called when submit button is clicked  
 def submitName2():  
    # getting the entered name from the entry field  
-   renameName = enteredFileName.get()  
+   renameName = enteredExtension.get()  
    # setting the entry field to empty string  
    enteredFileName.set("")  
    # calling the getFilePath() function  
@@ -453,7 +453,7 @@ def submitName2():
    # specifying the title of the pop-up window  
    listFilesWindow.title(f'Duplicates in {folder}')  
    # specifying the size and position of the window  
-   listFilesWindow.geometry("300x500+300+200")  
+   listFilesWindow.geometry("300x2000+300+200")  
    # disabling the resizable option  
    listFilesWindow.resizable(0, 0)  
    # setting the background color of the window to #EC2FB1  
@@ -503,7 +503,7 @@ def searchLargeFiles():
    # specifying the title of the pop-up window  
    listFilesWindow.title(f'Large files in {folder}')  
    # specifying the size and position of the window  
-   listFilesWindow.geometry("300x500+300+200")  
+   listFilesWindow.geometry("300x2000+300+200")  
    # disabling the resizable option  
    listFilesWindow.resizable(0, 0)  
    # setting the background color of the window to #EC2FB1  
@@ -538,7 +538,157 @@ def searchLargeFiles():
    the_listbox.insert(END, "")  
    the_listbox.insert(END, "Total Files: " + str(len(files))) 
 
+def filteredSearch():
+   rename_window = Toplevel(win_root)  
+   # setting the title  
+   rename_window.title("Enter extension")  
+   # setting the size and position of the window  
+   rename_window.geometry("300x300+300+250")  
+   # disabling the resizable option  
+   rename_window.resizable(0, 0)  
+   # setting the background color of the window to #F6EAD7  
+   rename_window.configure(bg = "#F6EAD7")  
+     
+   # creating a label  
+   size_label = Label(  
+      rename_window,  
+      text = "Enter the size:(in MBs)",  
+      font = ("verdana", "8"),  
+      bg = "#F6EAD7",  
+      fg = "#000000"  
+      )  
+   # placing the label on the window  
+   size_label.pack(pady = 4)  
+     
+   # creating an entry field  
+   size_field = Entry(  
+      rename_window,  
+      width = 26,  
+      #IntVar = enteredSize, 
+      textvariable = enteredFileName, 
+      relief = GROOVE,  
+      font = ("verdana", "10"),  
+      bg = "#FFFFFF",  
+      fg = "#000000"  
+      )  
+   size_field.pack(pady = 4, padx = 4)  
+   extension_label = Label(  
+      rename_window,  
+      text = "Enter the extensions:(comma seperated)",  
+      font = ("verdana", "8"),  
+      bg = "#F6EAD7",  
+      fg = "#000000"  
+      ) 
+   
+   extension_label.pack(pady=4)
 
+   extension_field = Entry(  
+      rename_window,  
+      width = 26,  
+      textvariable = enteredExtension,  
+      relief = GROOVE,  
+      font = ("verdana", "10"),  
+      bg = "#FFFFFF",  
+      fg = "#000000"  
+      )
+   extension_field.pack(pady=4) 
+   # placing the entry field on the window  
+   
+  
+   # creating a button  
+   submitButton = Button(  
+      rename_window,  
+      text = "Submit",  
+      command = submitName3,  
+      width = 12,  
+      relief = GROOVE,  
+      font = ("verdana", "8"),  
+      bg = "#C8F25D",  
+      fg = "#000000",  
+      activebackground = "#709218",  
+      activeforeground = "#FFFFFF"  
+      )  
+   # placing the button on the window  
+   submitButton.pack(pady = 2)  
+  
+# defining a function get the file path  
+def getFolder():  
+   # selecting the file using the filedialog's askopenfilename() method  
+   the_folder = fd.askdirectory() 
+   # returning the file path  
+   return the_folder  
+  
+# defining a function that will be called when submit button is clicked  
+def submitName3():  
+   # getting the entered name from the entry field  
+   size = enteredFileName.get()
+   if(size == ""):
+      size = 0
+   size = float(size)
+   size = size*1024*1024
+   # setting the entry field to empty string  
+   enteredFileName.set("")  
+   # calling the getFilePath() function
+   extension = enteredExtension.get()
+   enteredExtension.set("")
+   extension = extension.split(",")
+   folder = getFolder()  
+   walker = os.walk(folder)
+   arr = []
+   arr2 = []
+   for root, dirs, files in walker:
+      for file in files:
+         res = len(extension) == 0
+         for ext in extension:
+            if(file.endswith(ext)):
+               res = True
+               break
+         if not res:
+            continue
+         file_path = Path(os.path.join(root,file))
+         if(file_path.stat().st_size >= size):
+            arr.append(file)
+            arr2.append(file_path.stat().st_size/(1024*1024))
+   #print(res)
+   # creating an object of Toplevel class  
+   listFilesWindow = Toplevel(win_root)  
+   # specifying the title of the pop-up window  
+   listFilesWindow.title(f'Duplicates in {folder}')  
+   # specifying the size and position of the window  
+   listFilesWindow.geometry("300x500+300+200")  
+   # disabling the resizable option  
+   listFilesWindow.resizable(0, 0)  
+   # setting the background color of the window to #EC2FB1  
+   listFilesWindow.configure(bg = "#EC2FB1")  
+   # creating a list box  
+   the_listbox = Listbox(  
+      listFilesWindow,  
+      selectbackground = "#F24FBF",  
+      font = ("Verdana", "10"),  
+      background = "#FFCBEE"  
+      )  
+   # placing the list box on the window  
+   the_listbox.place(relx = 0, rely = 0, relheight = 1, relwidth = 1)  
+     
+   # creating a scroll bar  
+   the_scrollbar = Scrollbar(  
+      the_listbox,  
+      orient = VERTICAL,  
+      command = the_listbox.yview  
+      )  
+   # placing the scroll bar to the right side of the window  
+   the_scrollbar.pack(side = RIGHT, fill = Y)  
+  
+   # setting the yscrollcommand parameter of the listbox's config() method to the scrollbar  
+   the_listbox.config(yscrollcommand = the_scrollbar.set)  
+   i=0
+   # iterating through the files in the folder  
+   while i < len(arr):  
+      # using the insert() method to insert the file details in the list box  
+      the_listbox.insert(END, "[" + str(i+1) + "] " + str(arr[i]) + ", " + '%.2f' % arr2[i] + " MBs")  
+      i += 1  
+   the_listbox.insert(END, "")  
+   the_listbox.insert(END, "Total Files: " + str(len(arr)))
 
 # main function  
 if __name__ == "__main__":  
@@ -748,7 +898,18 @@ if __name__ == "__main__":
       activeforeground = "#D0FEF7",  
       command =  searchLargeFiles
       ) 
-   
+   filtered_search_button = Button(  
+      buttons_frame,  
+      text = "Filtered Search",  
+      font = ("verdana", "10"),  
+      width = 18,  
+      bg = "#6AD9C7",  
+      fg = "#000000",  
+      relief = GROOVE,  
+      activebackground = "#286F63",  
+      activeforeground = "#D0FEF7",  
+      command =  filteredSearch
+      ) 
    # using the pack() method to place the buttons in the window  
    open_button.pack(pady = 8)  
    copy_button.pack(pady = 8)  
@@ -763,8 +924,10 @@ if __name__ == "__main__":
    detect_duplicate_button.pack(pady = 8)
    search_extension_button.pack(pady = 8)
    search_largefile_button.pack(pady = 8)
+   filtered_search_button.pack(pady = 8)
    # creating an object of the StringVar() class  
    enteredFileName = StringVar()  
    enteredExtension = StringVar()
+
    # running the window  
    win_root.mainloop()  
