@@ -360,10 +360,8 @@ def free_space_on_disk():
    
    total,used,free=shutil.disk_usage(root)
 
-   total = total / (2**30)
-   used = used / (2**30)
-   free = free / (2**30)
    used=total-free
+
    categories = ['Used Space', 'Free Space']
    sizes = [(used*100.0)/total,(free*100.0)/total]
    # Create the pie chart
@@ -372,7 +370,7 @@ def free_space_on_disk():
    plt.pie(sizes, labels=categories,autopct='%1.1f%%', startangle=69)
    proxy_artists = [plt.Rectangle((-1, -1), 0.5, 0.5, fc='C0'),
                  plt.Rectangle((-1, -1), 0.5, 0.5, fc='C1')]
-   legend_labels=[str(used),str(free)]
+   legend_labels=[format_size(used),format_size(free)]
    plt.legend(proxy_artists, legend_labels, loc='upper left')
    plt.show()
 
@@ -386,7 +384,6 @@ def show_space_used():
    ret = subprocess.run(["du","-sh",f"{the_path}"],capture_output=True, text=True, check=True)
    ret1=ret.stdout.strip().split('\t')
    ret=ret1[0]
-   ret=ret[:-1]
    # print(ret)
 
    # folder_space_usage = (folder_space_usage / (2**30))
@@ -424,7 +421,7 @@ def show_space_used():
    # setting the yscrollcommand parameter of the listbox's config() method to the scrollbar  
    the_listbox.config(yscrollcommand = the_scrollbar.set)  
 
-   the_listbox.insert(END,f"Space Utilisation : {ret} GB")
+   the_listbox.insert(END,f"Space Utilisation : {ret} ")
 
 def detect_duplicate():
    parent_folder = fd.askdirectory(title="Select a folder to search for duplicates")
@@ -871,7 +868,7 @@ if __name__ == "__main__":
    win_root.resizable(0, 0) 
    width = win_root.winfo_screenwidth()  # Getting the height and width of the screen
    height = win_root.winfo_screenheight() 
-   win_root.geometry("%dx%d" % (725, height/1.7))  # Opening the window in full screen 
+   win_root.geometry("%dx%d" % (780, height/1.7))  # Opening the window in full screen 
    win_root.configure(bg = "#b2ffff")  
   
    # creating the frames using the Frame() widget  
