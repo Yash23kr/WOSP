@@ -50,18 +50,18 @@ def copyFile():
          message = "Selected file is unable to copy to the selected location. Please try again!"  
          )  
 #Function to generate insights on type of files and number of files of each type using os.scandir() method
-def generateInsightsUsingScandir(directory):
+def list_all_files(directory):
     all_files = []
     for entry in os.scandir(directory):
         if entry.is_file():
             all_files.append(entry.path)
         elif entry.is_dir():
-            all_files.extend(generateInsightsUsingScandir(entry.path))
+            all_files.extend(list_all_files(entry.path))
     return all_files
 
 def generateInsights():
     directory = fd.askdirectory(title="Select the folder to generate insights")
-    all_files = generateInsightsUsingScandir(directory)
+    all_files = list_all_files(directory)
     
     file_types = {}
     files_sizes = {}
@@ -85,9 +85,16 @@ def generateInsights():
     file_types["Others"] = sum(list(file_types2.values())[10:])
     #Add y value on top of each bar
     #figure, axis = plt.subplots(2, 2)
-    plt.subplot(2,1,1)
+    plt.subplot(1,2,1)
     #ax1 = plot1.add_subplot(111)
-    plt.bar(file_types.keys(), file_types.values())
+    bars = plt.bar(file_types.keys(), file_types.values())
+    c=0
+    for bar in bars:
+       if c%2==0:
+          bar.set_color('#29689e')
+       else:
+            bar.set_color('#c6c991')
+       c+=1
     for i, v in enumerate(file_types.values()):
       plt.text(i - 0.25, v + 0.01, str(v))
 
@@ -106,8 +113,9 @@ def generateInsights():
     
     #plot2 = plt.add_subplot(111)
     #ax2 = plot2.add_subplot(111)
-    plt.subplot(2,1,2)
-    plt.pie(files_sizes.values(), labels=files_sizes.keys(), autopct='%1.1f%%')
+    piechart_colors = ['#F66D44','#FEAE65','#E6F69D','#AADEA7','#64C2A6','#2D87BB']
+    plt.subplot(1,2,2)
+    plt.pie(files_sizes.values(), labels=files_sizes.keys(), autopct='%1.1f%%', shadow=True, colors=piechart_colors)
     plt.title("Percentage of Files by Size")
     plt.tight_layout()
     plt.show()
@@ -193,7 +201,7 @@ def select_extension():
 def delete_extension():
    file_type=enteredExtension.get()
    directory = fd.askdirectory(title="Select the folder to delete files of type: " + file_type)
-   all_files = generateInsightsUsingScandir(directory)
+   all_files = list_all_files(directory)
    deleted_files = 0
    ext_name_size = file_type.__len__()
    for file in all_files:
@@ -315,7 +323,8 @@ def moveFolder():
 # defining a function to list all the files available in a folder  
 def listFilesInFolder():  
    i = 0    
-   the_folder = fd.askdirectory(title = "Select the Folder")   
+   the_folder = fd.askdirectory(title = "Select the Folder") 
+   all_files = list_all_files(the_folder)
    walker = os.walk(the_folder)
    listFilesWindow = Toplevel(win_root)   
    listFilesWindow.title(f'Files in {the_folder}')   
@@ -655,7 +664,6 @@ def submitName2():
          )  
       the_listbox.place(relx = 0, rely = 0, relheight = 1, relwidth = 1)  
       
-      # creating a scroll bar  
       the_scrollbar = Scrollbar(  
          the_listbox,  
          orient = VERTICAL,  
@@ -697,7 +705,6 @@ def searchLargeFiles():
          )   
       the_listbox.place(relx = 0, rely = 0, relheight = 1, relwidth = 1)  
       
-      # creating a scroll bar  
       the_scrollbar = Scrollbar(  
          the_listbox,  
          orient = VERTICAL,  
@@ -893,27 +900,18 @@ def least_accessed_files():
    # print(lisn)
    tree.pack()
 if __name__ == "__main__":  
-   # creating an object of the Tk() class  
-   win_root = Tk()  
-   # setting the title of the main window  
+   win_root = Tk()   
    win_root.title("Wizard Of Systems Programming")  
-   # set the size and position of the window  
    win_root.geometry("500x700+650+250")  
-   # disabling the resizable option  
-   
    win_root.resizable(0, 0)  
-   # setting the background color to #D8E9E6  
    win_root.configure(bg = "#D8E9E6")  
   
-   # creating the frames using the Frame() widget  
    header_frame = Frame(win_root, bg = "#D8E9E6")  
    buttons_frame = Frame(win_root, bg = "#D8E9E6")  
   
-   # using the pack() method to place the frames in the window  
    header_frame.pack(fill = "both")  
    buttons_frame.pack(expand = TRUE, fill = "both")  
-  
-   # creating a label using the Label() widget  
+   
    header_label = Label(  
       header_frame,  
       text = "File Explorer",  
@@ -922,11 +920,8 @@ if __name__ == "__main__":
       fg = "#1A3C37"  
       )  
   
-   # using the pack() method to place the label in the window  
    header_label.pack(expand = TRUE, fill = "both", pady = 12)  
   
-   # creating the buttons using the Button() widget  
-   # open button  
    open_button = Button(  
       buttons_frame,  
       text = "Open a File",  
