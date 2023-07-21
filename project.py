@@ -85,14 +85,15 @@ def generateInsights():
     file_types = dict(list(file_types.items())[:10])
     file_types["Others"] = sum(list(file_types2.values())[10:])
     #Add y value on top of each bar
-    fig1 = plt.figure(figsize=(5,5))
-    ax1 = fig1.add_subplot(111)
-    ax1.bar(file_types.keys(), file_types.values())
+    #figure, axis = plt.subplots(2, 2)
+    plt.subplot(2,1,1)
+    #ax1 = plot1.add_subplot(111)
+    plt.bar(file_types.keys(), file_types.values())
     for i, v in enumerate(file_types.values()):
-      ax1.text(i - 0.25, v + 0.01, str(v))
+      plt.text(i - 0.25, v + 0.01, str(v))
 
-    ax1.set_title("Number of Files per File Type")
-    fig1.show()
+    plt.title("Number of Files per File Type")
+    #fig1.show()
     print("Total number of files: ", total_files)
     print("Total size of files: ", format_size(total_size))
     print("File types and number of files of each type: ")
@@ -104,11 +105,13 @@ def generateInsights():
       files_sizes = dict(list(files_sizes.items())[:5])
       files_sizes["Others"] = sum(list(file_types2.values())[5:])
     
-    fig2 = plt.figure(figsize=(5,5))
-    ax2 = fig2.add_subplot(111)
-    ax2.pie(files_sizes.values(), labels=files_sizes.keys(), autopct='%1.1f%%')
-    ax2.set_title("Percentage of Files by Size")
-    fig2.show()
+    #plot2 = plt.add_subplot(111)
+    #ax2 = plot2.add_subplot(111)
+    plt.subplot(2,1,2)
+    plt.pie(files_sizes.values(), labels=files_sizes.keys(), autopct='%1.1f%%')
+    plt.title("Percentage of Files by Size")
+    plt.tight_layout()
+    plt.show()
 
     display_text = ""
     for file_type, number_of_files in file_types.items():
