@@ -252,7 +252,7 @@ def detect_duplicate():
    # placing the list box on the window  
    the_listbox.place(relx = 0, rely = 0, relheight = 1, relwidth = 1)  
      
-   # creating a scroll bar  
+   #creating a scroll bar  
    the_scrollbar = Scrollbar(  
       the_listbox,  
       orient = VERTICAL,  
@@ -442,7 +442,7 @@ if __name__ == "__main__":
    # creating an object of the Tk() class  
    win_root = Tk()  
    # setting the title of the main window  
-   win_root.title("File Explorer - JAVATPOINT")  
+   win_root.title("File Explorer")  
    # set the size and position of the window  
    win_root.geometry("300x500+650+250")  
    # disabling the resizable option  
@@ -453,7 +453,6 @@ if __name__ == "__main__":
    # creating the frames using the Frame() widget  
    header_frame = Frame(win_root, bg = "#D8E9E6")  
    buttons_frame = Frame(win_root, bg = "#D8E9E6")  
-  
    # using the pack() method to place the frames in the window  
    header_frame.pack(fill = "both")  
    buttons_frame.pack(expand = TRUE, fill = "both")  
