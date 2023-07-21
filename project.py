@@ -379,8 +379,8 @@ def detect_duplicate():
    # iterating through the files in the folder  
    while i < len(duplicates):  
       # using the insert() method to insert the file details in the list box  
-      the_listbox.insert(END, "[" + str(i+1) + "] " + str(duplicates[i]) + " (path: " + str(filepaths[i]) + ")") 
-      the_listbox.insert(END, "Original File: " + str(hash_dictionary[hashlib.md5(open(filepaths[i],'rb').read()).hexdigest()])) 
+      the_listbox.insert(END, "[" + str(i+1) + "] " + str(duplicates[i])) 
+      the_listbox.insert(END, "Original File: " + str(hash_dictionary[hashlib.md5(open(duplicates[i],'rb').read()).hexdigest()])) 
       i += 1  
    the_listbox.insert(END, "")  
    the_listbox.insert(END, "Total Files: " + str(len(duplicates))) 
