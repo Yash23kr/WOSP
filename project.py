@@ -1,10 +1,15 @@
 # importing the required modules  
+import tkinter as tk
 from tkinter import *                   # importing all the widgets and modules from tkinter  
 from tkinter import messagebox as mb    # importing the messagebox module from tkinter  
 from tkinter import filedialog as fd    # importing the filedialog module from tkinter  
 import os                               # importing the os module  
 import shutil                           # importing the shutil module  
 import subprocess
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import matplotlib.pyplot as plt
+from tkinter import ttk
+import pandas
   
 # ----------------- defining functions -----------------  
 # function to open a file  
@@ -217,40 +222,41 @@ def listFilesInFolder():
    the_listbox.insert(END, "Total Files: " + str(len(the_files)))  
 
 
+
 def free_space_on_disk():
    root="/"
     
-   ShowDiskUsageWindow = Toplevel(win_root)  
-   # specifying the title of the pop-up window  
-   ShowDiskUsageWindow.title(f'Your Disk Usage')  
-   # specifying the size and position of the window  
-   ShowDiskUsageWindow.geometry("300x500+300+200")  
-   # disabling the resizable option  
-   ShowDiskUsageWindow.resizable(1, 1)  
-   # setting the background color of the window to #EC2FB1  
-   ShowDiskUsageWindow.configure(bg = "#EC2FB1")  
+   # ShowDiskUsageWindow = Toplevel(win_root)  
+   # # specifying the title of the pop-up window  
+   # ShowDiskUsageWindow.title(f'Your Disk Usage')  
+   # # specifying the size and position of the window  
+   # ShowDiskUsageWindow.geometry("300x500+300+200")  
+   # # disabling the resizable option  
+   # ShowDiskUsageWindow.resizable(1, 1)  
+   # # setting the background color of the window to #EC2FB1  
+   # ShowDiskUsageWindow.configure(bg = "#EC2FB1")  
   
-   # creating a list box  
-   the_listbox = Listbox(  
-      ShowDiskUsageWindow,  
-      selectbackground = "#F24FBF",  
-      font = ("Verdana", "10"),  
-      background = "#FFCBEE"  
-      )  
-   # placing the list box on the window  
-   the_listbox.place(relx = 0, rely = 0, relheight = 1, relwidth = 1)  
+   # # creating a list box  
+   # the_listbox = Listbox(  
+   #    ShowDiskUsageWindow,  
+   #    selectbackground = "#F24FBF",  
+   #    font = ("Verdana", "10"),  
+   #    background = "#FFCBEE"  
+   #    )  
+   # # placing the list box on the window  
+   # the_listbox.place(relx = 0, rely = 0, relheight = 1, relwidth = 1)  
      
-   # creating a scroll bar  
-   the_scrollbar = Scrollbar(  
-      the_listbox,  
-      orient = VERTICAL,
-      command = the_listbox.yview  
-      )  
-   # placing the scroll bar to the right side of the window  
-   the_scrollbar.pack(side = RIGHT, fill = Y)  
+   # # creating a scroll bar  
+   # the_scrollbar = Scrollbar(  
+   #    the_listbox,  
+   #    orient = VERTICAL,
+   #    command = the_listbox.yview  
+   #    )  
+   # # placing the scroll bar to the right side of the window  
+   # the_scrollbar.pack(side = RIGHT, fill = Y)  
   
-   # setting the yscrollcommand parameter of the listbox's config() method to the scrollbar  
-   the_listbox.config(yscrollcommand = the_scrollbar.set)  
+   # # setting the yscrollcommand parameter of the listbox's config() method to the scrollbar  
+   # the_listbox.config(yscrollcommand = the_scrollbar.set)  
 
    total,used,free=shutil.disk_usage(root)
 
@@ -259,9 +265,24 @@ def free_space_on_disk():
    free = free / (2**30)
    used=total-free
 
-   the_listbox.insert(END,f"Total : {total} GB")
-   the_listbox.insert(END,f"Used : {used} GB")
-   the_listbox.insert(END,f"Free : {free} GB")
+   categories = ['Used Space', 'Free Space']
+   sizes = [(used*100.0)/total,(free*100.0)/total]
+   # Create the pie chart
+   plt.figure(figsize=(6,6))  # Adjust the figure size as needed
+   plt.title('Disk Usage')
+   plt.pie(sizes, labels=categories,autopct='%1.1f%%', startangle=69)
+   plt.show()
+
+   # canvas = FigureCanvasTkAgg(plt.gcf(), master=ShowDiskUsageWindow)
+   # canvas.draw()
+
+   # the_listbox.window_create(tk.END, window=canvas.get_tk_widget())
+
+   # the_listbox.insert(END,f"Total : {total} GB")
+   # the_listbox.insert(END,f"Used : {used} GB")
+   # the_listbox.insert(END,f"Free : {free} GB")
+
+
 
    # total_used = get_size(root)
    # the_listbox.insert(END, f"Total : {total_used / (2**30)} GB")
@@ -319,6 +340,53 @@ def show_space_used():
    the_listbox.insert(END,f"Space Utilisation : {ret} GB")
 
 
+def least_accessed_files():
+   the_path = fd.askdirectory(title = "Select folder to check last access of files") 
+   ShowLeastAccessedFiles = Toplevel(win_root)  
+   # specifying the title of the pop-up window  
+   ShowLeastAccessedFiles.title(f'Least Accessed files in {the_path}')  
+   # specifying the size and position of the window  
+   ShowLeastAccessedFiles.geometry("300x500+300+200")  
+   # disabling the resizable option  
+   ShowLeastAccessedFiles.resizable(1, 1)  
+   # setting the background color of the window to #EC2FB1  
+   ShowLeastAccessedFiles.configure(bg = "#EC2FB1")  
+  
+   tree = ttk.Treeview(ShowLeastAccessedFiles)
+   tree["columns"] = ("Column 1", "Column 2", "Column 3")
+   # tree.heading("Column 1", text="Index", anchor=tk.W)  # Index column
+   # tree.column("Column 1", anchor=tk.W, width=60)
+   tree.heading("Column 1", text="File Name")
+   tree.column("Column 1", anchor=tk.W, width=200)
+   tree.heading("Column 2", text="Date Accessed")
+   tree.column("Column 2", anchor=tk.W, width=200)
+   tree.heading("Column 3", text="Time Accessed")
+   tree.column("Column 3", anchor=tk.W, width=200)
+   cnt=0
+   lis=[]
+   for file_name in os.listdir(the_path):
+      file_path=the_path+"/"+str(file_name)
+      if(os.path.isfile(file_path)):
+         cnt+=1
+         # print(file_name)
+         ret = subprocess.run(["stat",f"{file_path}"],capture_output=True, text=True, check=True)
+         ret1=ret.stdout.strip().split('\n')
+         ret2=ret1[4].split(' ')
+         # the_listbox.insert(END,"{:>50} {:>50} {:>50}".format(f"{file_path}",f"{ret2[1]}",f"{ret2[2]}"))
+         # tree.insert("",END,iid=cnt,values=(f"[{cnt}]",f"{file_path}",f"{ret2[1]}",f"{ret2[2]}"))
+         ret3=ret2[1].split('-')
+         ret3=ret3[0]+"/"+ret3[1]+"/"+ret3[2]
+         lis.append([f"{file_path}",ret3,f"{ret2[2]}"])
+
+   df = pandas.DataFrame(data=lis,columns=["File Name","Date Modified","Time Modified"])
+   # print(df)
+   df.sort_values(['Date Modified'],inplace=True)
+   # print(df)
+   lisn = df.to_numpy().tolist()
+   for index, row in enumerate(lisn, start=1):
+      tree.insert("", tk.END, values=row)
+   # print(lisn)
+   tree.pack()
 
 # main function  
 if __name__ == "__main__":  
@@ -392,6 +460,18 @@ if __name__ == "__main__":
       activebackground = "#286F63",  
       activeforeground = "#D0FEF7",  
       command = show_space_used 
+      )  
+   least_access = Button(  
+      buttons_frame,  
+      text = "Check least accessed files",  
+      font = ("verdana", "10"),  
+      width = 18,  
+      bg = "#6AD9C7",  
+      fg = "#000000",  
+      relief = GROOVE,  
+      activebackground = "#286F63",  
+      activeforeground = "#D0FEF7",  
+      command = least_accessed_files 
       )  
    
    # copy button  
@@ -503,6 +583,7 @@ if __name__ == "__main__":
    list_button.pack(pady = 8)  
    disk_space_usage.pack(pady=8)
    show_space_usage.pack(pady=8)
+   least_access.pack(pady=8)
   
    # creating an object of the StringVar() class  
    enteredFileName = StringVar()  
