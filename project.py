@@ -521,10 +521,8 @@ def detect_duplicate():
       the_listbox.config(yscrollcommand = the_scrollbar.set)  
       i=0
       while i < len(duplicates):    
-         the_listbox.insert(END, "[" + str(i+1) + "] " + str(duplicates[i])) 
-         if i == len(duplicates) - 1:
-            the_listbox.insert(END, "") 
-            the_listbox.insert(END, "Original File: " + str(hash_dictionary[hashlib.md5(open(duplicates[i],'rb').read()).hexdigest()])) 
+         the_listbox.insert(END, "[" + str(i+1) + "] " + str(duplicates[i]))
+         the_listbox.insert(END, "Original File: " + str(hash_dictionary[hashlib.md5(open(duplicates[i],'rb').read()).hexdigest()])) 
          i += 1  
        
       the_listbox.insert(END, "Total Files: " + str(len(duplicates))) 
