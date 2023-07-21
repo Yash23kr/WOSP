@@ -21,8 +21,10 @@ def openFile():
       title = "Select a file of any type",  
       filetypes = [("All files", "*.*")]  
       )  
-   # opening a file using the startfile() method of the os module  
-   os.startfile(os.path.abspath(the_file))  
+   # opening a file using the startfile() method of the os module 
+   opener = "xdg-open"
+   subprocess.call([opener, the_file]) 
+   # os.startfile(os.path.abspath(the_file))  
   
 # function to copy a file  
 def copyFile():  
@@ -282,7 +284,8 @@ def openFolder():
    # using the filedialog's askdirectory() method to select the folder  
    the_folder = fd.askdirectory(title = "Select Folder to open")  
    # using the startfile() of the os module to open the selected folder  
-   os.startfile(the_folder)  
+   subprocess.run(['nautilus',f'{the_folder}'])
+   # os.startfile(the_folder)  
   
 # defining a function to delete the folder  
 def deleteFolder():  
@@ -651,7 +654,7 @@ def searchLargeFiles():
          command = the_listbox.yview  
          )  
       the_scrollbar.pack(side = RIGHT, fill = Y)  
-      print(largefiles)
+      # print(largefiles)
       # setting the yscrollcommand parameter of the listbox's config() method to the scrollbar  
       the_listbox.config(yscrollcommand = the_scrollbar.set)  
       i=0
@@ -883,6 +886,7 @@ if __name__ == "__main__":
    color1="#3C3D3D"
    color2="#FFFFFF"
    color3="#FC5B05"
+   color4="#000000"
    open_button = Button(  
       buttons_frame,  
       text = "Open a File",  
@@ -892,7 +896,7 @@ if __name__ == "__main__":
       fg = color2,  
       relief = GROOVE,  
       activebackground = color3,  
-      activeforeground = color2,  
+      activeforeground = color4,  
       command = openFile,
       )  
    
@@ -905,7 +909,7 @@ if __name__ == "__main__":
       fg = color2,  
       relief = GROOVE,  
       activebackground = color3,  
-      activeforeground = color2,  
+      activeforeground = color4,  
       command = free_space_on_disk  
       )  
   
@@ -918,7 +922,7 @@ if __name__ == "__main__":
       fg = color2,  
       relief = GROOVE,  
       activebackground = color3,  
-      activeforeground = color2,  
+      activeforeground = color4,  
       command = show_space_used 
       )  
    least_access = Button(  
@@ -930,7 +934,7 @@ if __name__ == "__main__":
       fg = color2,  
       relief = GROOVE,  
       activebackground = color3,  
-      activeforeground = color2,  
+      activeforeground = color4,  
       command = least_accessed_files 
       )  
    
@@ -944,7 +948,7 @@ if __name__ == "__main__":
       fg = color2,  
       relief = GROOVE,  
       activebackground = color3,  
-      activeforeground = color2,  
+      activeforeground = color4,  
       command = copyFile  
       )  
   
@@ -958,7 +962,7 @@ if __name__ == "__main__":
       fg = color2,  
       relief = GROOVE,  
       activebackground = color3,  
-      activeforeground = color2,  
+      activeforeground = color4,  
       command = deleteFile  
       )  
   
@@ -972,37 +976,37 @@ if __name__ == "__main__":
       fg = color2,  
       relief = GROOVE,  
       activebackground = color3,  
-      activeforeground = color2,  
+      activeforeground = color4,  
       command = renameFile  
       )  
   
    # open folder button  
-   open_folder_button = Button(  
-      buttons_frame,  
-      text = "Open a Folder",  
-      font = ("verdana", "10"),  
-      width = 26,  
-      bg = color1,  
-      fg = color2,  
-      relief = GROOVE,  
-      activebackground = color3,  
-      activeforeground = color2,  
-      command = openFolder  
-      )  
+   # open_folder_button = Button(  
+   #    buttons_frame,  
+   #    text = "Open a Folder",  
+   #    font = ("verdana", "10"),  
+   #    width = 26,  
+   #    bg = color1,  
+   #    fg = color2,  
+   #    relief = GROOVE,  
+   #    activebackground = color3,  
+   #    activeforeground = color4,  
+   #    command = openFolder  
+   #    )  
   
    # delete folder button  
-   delete_folder_button = Button(  
-      buttons_frame,  
-      text = "Delete a Folder",  
-      font = ("verdana", "10"),  
-      width = 26,  
-      bg = color1,  
-      fg = color2,  
-      relief = GROOVE,  
-      activebackground = color3,  
-      activeforeground = color2,  
-      command = deleteFolder  
-      )  
+   # delete_folder_button = Button(  
+   #    buttons_frame,  
+   #    text = "Delete a Folder",  
+   #    font = ("verdana", "10"),  
+   #    width = 26,  
+   #    bg = color1,  
+   #    fg = color2,  
+   #    relief = GROOVE,  
+   #    activebackground = color3,  
+   #    activeforeground = color4,  
+   #    command = deleteFolder  
+   #    )  
   
    # move folder button  
    move_folder_button = Button(  
@@ -1014,7 +1018,7 @@ if __name__ == "__main__":
       fg = color2,  
       relief = GROOVE,  
       activebackground = color3,  
-      activeforeground = color2,  
+      activeforeground = color4,  
       command = moveFolder  
       )  
   
@@ -1028,7 +1032,7 @@ if __name__ == "__main__":
       fg = color2,  
       relief = GROOVE,  
       activebackground = color3,  
-      activeforeground = color2,  
+      activeforeground = color4,  
       command = listFilesInFolder  
       )  
    detect_duplicate_button = Button(  
@@ -1040,7 +1044,7 @@ if __name__ == "__main__":
       fg = color2,  
       relief = GROOVE,  
       activebackground = color3,  
-      activeforeground = color2,  
+      activeforeground = color4,  
       command =  detect_duplicate
       ) 
    
@@ -1053,7 +1057,7 @@ if __name__ == "__main__":
       fg = color2,  
       relief = GROOVE,  
       activebackground = color3,  
-      activeforeground = color2,  
+      activeforeground = color4,  
       command =  search_by_extension
       ) 
    search_largefile_button = Button(  
@@ -1065,7 +1069,7 @@ if __name__ == "__main__":
       fg = color2,  
       relief = GROOVE,  
       activebackground = color3,  
-      activeforeground = color2,  
+      activeforeground = color4,  
       command =  searchLargeFiles
       ) 
    filtered_search_button = Button(  
@@ -1077,7 +1081,7 @@ if __name__ == "__main__":
       fg = color2,  
       relief = GROOVE,  
       activebackground = color3,  
-      activeforeground = color2,  
+      activeforeground = color4,  
       command =  filteredSearch
       )
    generate_insights_button = Button(
@@ -1089,7 +1093,7 @@ if __name__ == "__main__":
         fg = color2,
         relief = GROOVE,
         activebackground = color3,
-        activeforeground = color2,
+        activeforeground = color4,
         command = generateInsights
     )
    delete_files_of_type_button = Button(
@@ -1101,7 +1105,7 @@ if __name__ == "__main__":
         fg = color2,
         relief = GROOVE,
         activebackground = color3,
-        activeforeground = color2,
+        activeforeground = color4,
         command = select_extension
       )
    delete_duplicates_button = Button(
@@ -1113,7 +1117,7 @@ if __name__ == "__main__":
         fg = color2,
         relief = GROOVE,
         activebackground = color3,
-        activeforeground = color2,
+        activeforeground = color4,
         command = deleteDuplicates
       )
 
@@ -1127,21 +1131,21 @@ if __name__ == "__main__":
    # move_folder_button.pack(pady = 8)  
    list_button.grid(row=0,column=0,padx=3,pady = 5)  
    disk_space_usage.grid(row=0,column=1,padx=3,pady=5)
-   show_space_usage.grid(row=0,column=2,padx=3,pady=5)
+   show_space_usage.grid(row=0,column=2,padx=3,pady=10)
    least_access.grid(row=1,column=0,padx=3,pady=5)
    detect_duplicate_button.grid(row=1,column=1,padx=3,pady = 5)
-   generate_insights_button.grid(row=1,column=2,padx=3,pady = 5)
-   search_extension_button.grid(row=2,column=0,padx=3,pady = 5)
+   generate_insights_button.grid(row=1,column=2,padx=3,pady = 10)
+   search_extension_button.grid(row=2,column=0,padx=3,pady = 10)
    search_largefile_button.grid(row=2,column=1,padx=3,pady = 5)
    filtered_search_button.grid(row=2,column=2,padx=3,pady = 5)
-   delete_files_of_type_button.grid(row=3,column=0,padx=15,pady = 5)
-   delete_duplicates_button.grid(row=3,column=2,padx=15,pady = 5)
+   delete_files_of_type_button.grid(row=3,column=0,padx=15,pady = 10)
+   delete_duplicates_button.grid(row=3,column=2,padx=15,pady = 10)
    open_button.grid(row=4,column=0,padx=3,pady = 5)
    copy_button.grid(row=4,column=1,padx=3,pady = 5)
-   delete_button.grid(row=4,column=2,padx=3,pady = 5)
-   rename_button.grid(row=5,column=0,padx=3,pady = 5)
-   open_folder_button.grid(row=5,column=1,padx=3,pady = 5)
-   delete_folder_button.grid(row=5,column=2,padx=3,pady = 5)
+   delete_button.grid(row=4,column=2,padx=3,pady = 10)
+   rename_button.grid(row=3,column=1,padx=3,pady = 5)
+   # open_folder_button.grid(row=5,column=1,padx=3,pady = 5)
+   # delete_folder_button.grid(row=5,column=2,padx=3,pady = 5)
    # creating an object of the StringVar() class  
    enteredFileName = StringVar()  
    enteredExtension = StringVar()
