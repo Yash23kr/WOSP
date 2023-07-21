@@ -10,7 +10,6 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
 from tkinter import ttk
 import pandas
-  
 from pathlib import Path
 import hashlib
 import time
@@ -51,18 +50,18 @@ def copyFile():
          message = "Selected file is unable to copy to the selected location. Please try again!"  
          )  
 #Function to generate insights on type of files and number of files of each type using os.scandir() method
-def generateInsightsUsingScandir(directory):
+def list_all_files(directory):
     all_files = []
     for entry in os.scandir(directory):
         if entry.is_file():
             all_files.append(entry.path)
         elif entry.is_dir():
-            all_files.extend(generateInsightsUsingScandir(entry.path))
+            all_files.extend(list_all_files(entry.path))
     return all_files
 
 def generateInsights():
     directory = fd.askdirectory(title="Select the folder to generate insights")
-    all_files = generateInsightsUsingScandir(directory)
+    all_files = list_all_files(directory)
     
     file_types = {}
     files_sizes = {}
@@ -85,14 +84,22 @@ def generateInsights():
     file_types = dict(list(file_types.items())[:10])
     file_types["Others"] = sum(list(file_types2.values())[10:])
     #Add y value on top of each bar
-    fig1 = plt.figure(figsize=(5,5))
-    ax1 = fig1.add_subplot(111)
-    ax1.bar(file_types.keys(), file_types.values())
+    #figure, axis = plt.subplots(2, 2)
+    plt.subplot(1,2,1)
+    #ax1 = plot1.add_subplot(111)
+    bars = plt.bar(file_types.keys(), file_types.values())
+    c=0
+    for bar in bars:
+       if c%2==0:
+          bar.set_color('#29689e')
+       else:
+            bar.set_color('#c6c991')
+       c+=1
     for i, v in enumerate(file_types.values()):
-      ax1.text(i - 0.25, v + 0.01, str(v))
+      plt.text(i - 0.25, v + 0.01, str(v))
 
-    ax1.set_title("Number of Files per File Type")
-    fig1.show()
+    plt.title("Number of Files per File Type")
+    #fig1.show()
     print("Total number of files: ", total_files)
     print("Total size of files: ", format_size(total_size))
     print("File types and number of files of each type: ")
@@ -104,11 +111,14 @@ def generateInsights():
       files_sizes = dict(list(files_sizes.items())[:5])
       files_sizes["Others"] = sum(list(file_types2.values())[5:])
     
-    fig2 = plt.figure(figsize=(5,5))
-    ax2 = fig2.add_subplot(111)
-    ax2.pie(files_sizes.values(), labels=files_sizes.keys(), autopct='%1.1f%%')
-    ax2.set_title("Percentage of Files by Size")
-    fig2.show()
+    #plot2 = plt.add_subplot(111)
+    #ax2 = plot2.add_subplot(111)
+    piechart_colors = ['#F66D44','#FEAE65','#E6F69D','#AADEA7','#64C2A6','#2D87BB']
+    plt.subplot(1,2,2)
+    plt.pie(files_sizes.values(), labels=files_sizes.keys(), autopct='%1.1f%%', shadow=True, colors=piechart_colors)
+    plt.title("Percentage of Files by Size")
+    plt.tight_layout()
+    plt.show()
 
     display_text = ""
     for file_type, number_of_files in file_types.items():
@@ -191,7 +201,7 @@ def select_extension():
 def delete_extension():
    file_type=enteredExtension.get()
    directory = fd.askdirectory(title="Select the folder to delete files of type: " + file_type)
-   all_files = generateInsightsUsingScandir(directory)
+   all_files = list_all_files(directory)
    deleted_files = 0
    ext_name_size = file_type.__len__()
    for file in all_files:
@@ -313,7 +323,8 @@ def moveFolder():
 # defining a function to list all the files available in a folder  
 def listFilesInFolder():  
    i = 0    
-   the_folder = fd.askdirectory(title = "Select the Folder")   
+   the_folder = fd.askdirectory(title = "Select the Folder") 
+   all_files = list_all_files(the_folder)
    walker = os.walk(the_folder)
    listFilesWindow = Toplevel(win_root)   
    listFilesWindow.title(f'Files in {the_folder}')   
@@ -384,13 +395,11 @@ def show_space_used():
 
       
    ShowFolderSpaceUsage = Toplevel(win_root)  
-   # specifying the title of the pop-up window  
    ShowFolderSpaceUsage.title(f'Usage of {the_path}')  
    # specifying the size and position of the window  
    ShowFolderSpaceUsage.geometry("400x200+300+200")  
    # disabling the resizable option  
    ShowFolderSpaceUsage.resizable(1, 1)  
-   # setting the background color of the window to #EC2FB1  
    ShowFolderSpaceUsage.configure(bg = "#EC2FB1")  
   
    # creating a list box  
@@ -423,6 +432,7 @@ def detect_duplicate():
    hash_dictionary = dict()
    duplicates = []
    filepaths = []
+
    for root, dirs, files in file_list:
       for file in files:
          file_path = Path(os.path.join(root,file))
@@ -471,11 +481,75 @@ def detect_duplicate():
       i=0
       while i < len(duplicates):    
          the_listbox.insert(END, "[" + str(i+1) + "] " + str(duplicates[i])) 
-         the_listbox.insert(END, "Original File: " + str(hash_dictionary[hashlib.md5(open(duplicates[i],'rb').read()).hexdigest()])) 
+         if i == len(duplicates) - 1:
+            the_listbox.insert(END, "") 
+            the_listbox.insert(END, "Original File: " + str(hash_dictionary[hashlib.md5(open(duplicates[i],'rb').read()).hexdigest()])) 
+         i += 1  
+       
+      the_listbox.insert(END, "Total Files: " + str(len(duplicates))) 
+   
+def deleteDuplicates():
+   parent_folder = fd.askdirectory(title="Select a folder to search for duplicates")
+   file_list = os.walk(parent_folder)
+   hash_dictionary = dict()
+   duplicates = []
+   filepaths = []
+   for root, dirs, files in file_list:
+      for file in files:
+         file_path = Path(os.path.join(root,file))
+         hash = hashlib.md5(open(file_path,'rb').read()).hexdigest()
+         if hash in hash_dictionary.keys():
+            first = hash_dictionary[hash]
+            second = file_path
+            tic1 = time.ctime(os.path.getctime(first))
+            tic2 = time.ctime(os.path.getctime(second))
+            if(tic1 < tic2):
+               duplicates.append(first)
+               os.remove(first)
+               hash_dictionary[hash] = second
+            else:
+               duplicates.append(second)
+               os.remove(second)
+               hash_dictionary[hash] = first
+         else:
+            hash_dictionary[hash] = file_path
+   if len(duplicates) == 0:
+      mb.showinfo(title = "No duplicates found!", message = "No duplicates found in the selected folder.")
+   else:
+      # creating an object of Toplevel class  
+      listFilesWindow = Toplevel(win_root)  
+      listFilesWindow.title(f'Following duplicates deleted {parent_folder}')  
+      listFilesWindow.geometry("1000x300+300+200")    
+      listFilesWindow.resizable(0, 0)  
+      listFilesWindow.configure(bg = "#EC2FB1")  
+   
+      # creating a list box  
+      the_listbox = Listbox(  
+         listFilesWindow,  
+         selectbackground = "#F24FBF",  
+         font = ("Verdana", "10"),  
+         background = "#FFCBEE"  
+         )  
+      # placing the list box on the window  
+      the_listbox.place(relx = 0, rely = 0, relheight = 1, relwidth = 1)  
+      
+      #creating a scroll bar  
+      the_scrollbar = Scrollbar(  
+         the_listbox,  
+         orient = VERTICAL,  
+         command = the_listbox.yview  
+         )   
+      the_scrollbar.pack(side = RIGHT, fill = Y)  
+      the_listbox.config(yscrollcommand = the_scrollbar.set)  
+      i=0
+      while i < len(duplicates):    
+         the_listbox.insert(END, "[" + str(i+1) + "] " + str(duplicates[i])) 
+         #the_listbox.insert(END, "Original File: " + str(hash_dictionary[hashlib.md5(open(duplicates[i],'rb').read()).hexdigest()])) 
          i += 1  
       the_listbox.insert(END, "")  
       the_listbox.insert(END, "Total Files: " + str(len(duplicates))) 
-   
+
+
 def search_by_extension():  
    # creating another window  
    rename_window = Toplevel(win_root)   
@@ -549,7 +623,6 @@ def submitName2():
          )  
       the_listbox.place(relx = 0, rely = 0, relheight = 1, relwidth = 1)  
       
-      # creating a scroll bar  
       the_scrollbar = Scrollbar(  
          the_listbox,  
          orient = VERTICAL,  
@@ -591,7 +664,6 @@ def searchLargeFiles():
          )   
       the_listbox.place(relx = 0, rely = 0, relheight = 1, relwidth = 1)  
       
-      # creating a scroll bar  
       the_scrollbar = Scrollbar(  
          the_listbox,  
          orient = VERTICAL,  
@@ -796,15 +868,17 @@ if __name__ == "__main__":
    # setting the title of the main window  
    win_root.title("Wizard Of Systems Programming")  
    # set the size and position of the window  
-   win_root.geometry("500x700+650+250")  
+   #win_root.geometry("500x700+650+250")  
    # disabling the resizable option  
-   win_root.resizable(0, 0)  
-   # setting the background color to #D8E9E6  
-   win_root.configure(bg = "#D8E9E6")  
+   win_root.resizable(0, 0) 
+   width = win_root.winfo_screenwidth()  # Getting the height and width of the screen
+   height = win_root.winfo_screenheight() 
+   win_root.geometry("%dx%d" % (725, height/1.7))  # Opening the window in full screen 
+   win_root.configure(bg = "#b7f9c9")  
   
    # creating the frames using the Frame() widget  
-   header_frame = Frame(win_root, bg = "#D8E9E6")  
-   buttons_frame = Frame(win_root, bg = "#D8E9E6")  
+   header_frame = Frame(win_root, bg = "#b7f9c9")  
+   buttons_frame = Frame(win_root, bg = "#b7f9c9")  
   
    # using the pack() method to place the frames in the window  
    header_frame.pack(fill = "both")  
@@ -813,9 +887,9 @@ if __name__ == "__main__":
    # creating a label using the Label() widget  
    header_label = Label(  
       header_frame,  
-      text = "File Explorer",  
+      text = "File Manager",  
       font = ("verdana", "16"),  
-      bg = "#D8E9E6",  
+      bg = "#b7f9c9",  
       fg = "#1A3C37"  
       )  
   
@@ -828,7 +902,7 @@ if __name__ == "__main__":
       buttons_frame,  
       text = "Open a File",  
       font = ("verdana", "10"),  
-      width = 18,  
+      width = 26,  
       bg = "#6AD9C7",  
       fg = "#000000",  
       relief = GROOVE,  
@@ -841,7 +915,7 @@ if __name__ == "__main__":
       buttons_frame,  
       text = "Check Disk Usage",  
       font = ("verdana", "10"),  
-      width = 18,  
+      width = 26,  
       bg = "#6AD9C7",  
       fg = "#000000",  
       relief = GROOVE,  
@@ -854,7 +928,7 @@ if __name__ == "__main__":
       buttons_frame,  
       text = "Check Folder's Space Usage",  
       font = ("verdana", "10"),  
-      width = 18,  
+      width = 26,  
       bg = "#6AD9C7",  
       fg = "#000000",  
       relief = GROOVE,  
@@ -866,7 +940,7 @@ if __name__ == "__main__":
       buttons_frame,  
       text = "Check least accessed files",  
       font = ("verdana", "10"),  
-      width = 18,  
+      width = 26,  
       bg = "#6AD9C7",  
       fg = "#000000",  
       relief = GROOVE,  
@@ -880,7 +954,7 @@ if __name__ == "__main__":
       buttons_frame,  
       text = "Copy a File",  
       font = ("verdana", "10"),  
-      width = 18,  
+      width = 26,  
       bg = "#6AD9C7",  
       fg = "#000000",  
       relief = GROOVE,  
@@ -894,7 +968,7 @@ if __name__ == "__main__":
       buttons_frame,  
       text = "Delete a File",  
       font = ("verdana", "10"),  
-      width = 18,  
+      width = 26,  
       bg = "#6AD9C7",  
       fg = "#000000",  
       relief = GROOVE,  
@@ -908,7 +982,7 @@ if __name__ == "__main__":
       buttons_frame,  
       text = "Rename a File",  
       font = ("verdana", "10"),  
-      width = 18,  
+      width = 26,  
       bg = "#6AD9C7",  
       fg = "#000000",  
       relief = GROOVE,  
@@ -922,7 +996,7 @@ if __name__ == "__main__":
       buttons_frame,  
       text = "Open a Folder",  
       font = ("verdana", "10"),  
-      width = 18,  
+      width = 26,  
       bg = "#6AD9C7",  
       fg = "#000000",  
       relief = GROOVE,  
@@ -936,7 +1010,7 @@ if __name__ == "__main__":
       buttons_frame,  
       text = "Delete a Folder",  
       font = ("verdana", "10"),  
-      width = 18,  
+      width = 26,  
       bg = "#6AD9C7",  
       fg = "#000000",  
       relief = GROOVE,  
@@ -950,7 +1024,7 @@ if __name__ == "__main__":
       buttons_frame,  
       text = "Move a Folder",  
       font = ("verdana", "10"),  
-      width = 18,  
+      width = 26,  
       bg = "#6AD9C7",  
       fg = "#000000",  
       relief = GROOVE,  
@@ -964,7 +1038,7 @@ if __name__ == "__main__":
       buttons_frame,  
       text = "List all files in Folder",  
       font = ("verdana", "10"),  
-      width = 18,  
+      width = 26,  
       bg = "#6AD9C7",  
       fg = "#000000",  
       relief = GROOVE,  
@@ -976,7 +1050,7 @@ if __name__ == "__main__":
       buttons_frame,  
       text = "Duplicates in Folder",  
       font = ("verdana", "10"),  
-      width = 18,  
+      width = 26,  
       bg = "#6AD9C7",  
       fg = "#000000",  
       relief = GROOVE,  
@@ -989,7 +1063,7 @@ if __name__ == "__main__":
       buttons_frame,  
       text = "Search by Extension",  
       font = ("verdana", "10"),  
-      width = 18,  
+      width = 26,  
       bg = "#6AD9C7",  
       fg = "#000000",  
       relief = GROOVE,  
@@ -1001,7 +1075,7 @@ if __name__ == "__main__":
       buttons_frame,  
       text = "List Large Files",  
       font = ("verdana", "10"),  
-      width = 18,  
+      width = 26,  
       bg = "#6AD9C7",  
       fg = "#000000",  
       relief = GROOVE,  
@@ -1013,7 +1087,7 @@ if __name__ == "__main__":
       buttons_frame,  
       text = "Filtered Search",  
       font = ("verdana", "10"),  
-      width = 18,  
+      width = 26,  
       bg = "#6AD9C7",  
       fg = "#000000",  
       relief = GROOVE,  
@@ -1025,7 +1099,7 @@ if __name__ == "__main__":
         buttons_frame,
         text = "Generate Insights",
         font = ("verdana", "10"),
-        width = 18,
+        width = 26,
         bg = "#6AD9C7",
         fg = "#000000",
         relief = GROOVE,
@@ -1037,13 +1111,25 @@ if __name__ == "__main__":
         buttons_frame,
         text = "Delete Files of Type",
         font = ("verdana", "10"),
-        width = 18,
+        width = 26,
         bg = "#6AD9C7",
         fg = "#000000",
         relief = GROOVE,
         activebackground = "#286F63",
         activeforeground = "#D0FEF7",
         command = select_extension
+      )
+   delete_duplicates_button = Button(
+        buttons_frame,
+        text = "Delete Duplicates",
+        font = ("verdana", "10"),
+        width = 26,
+        bg = "#6AD9C7",
+        fg = "#000000",
+        relief = GROOVE,
+        activebackground = "#286F63",
+        activeforeground = "#D0FEF7",
+        command = deleteDuplicates
       )
 
    # using the pack() method to place the buttons in the window  
@@ -1054,16 +1140,17 @@ if __name__ == "__main__":
    # open_folder_button.pack(pady = 8)  
    # delete_folder_button.pack(pady = 8)  
    # move_folder_button.pack(pady = 8)  
-   list_button.pack(pady = 8)  
-   disk_space_usage.pack(pady=8)
-   show_space_usage.pack(pady=8)
-   least_access.pack(pady=8)
-   detect_duplicate_button.pack(pady = 8)
-   generate_insights_button.pack(pady = 8)
-   search_extension_button.pack(pady = 8)
-   search_largefile_button.pack(pady = 8)
-   filtered_search_button.pack(pady = 8)
-   delete_files_of_type_button.pack(pady = 8)
+   list_button.grid(row=0,column=0,padx=3,pady = 5)  
+   disk_space_usage.grid(row=0,column=1,padx=3,pady=5)
+   show_space_usage.grid(row=0,column=2,padx=3,pady=5)
+   least_access.grid(row=1,column=0,padx=3,pady=5)
+   detect_duplicate_button.grid(row=1,column=1,padx=3,pady = 5)
+   generate_insights_button.grid(row=1,column=2,padx=3,pady = 5)
+   search_extension_button.grid(row=2,column=0,padx=3,pady = 5)
+   search_largefile_button.grid(row=2,column=1,padx=3,pady = 5)
+   filtered_search_button.grid(row=2,column=2,padx=3,pady = 5)
+   delete_files_of_type_button.grid(row=3,column=0,padx=15,pady = 5)
+   delete_duplicates_button.grid(row=3,column=2,padx=15,pady = 5)
    # creating an object of the StringVar() class  
    enteredFileName = StringVar()  
    enteredExtension = StringVar()
