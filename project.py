@@ -45,8 +45,7 @@ def copyFile():
          title = "File copied!",  
          message = "The selected file has been copied to the selected location."  
          )  
-   except:  
-      # using the showerror() method to display error  
+   except:   
       mb.showerror(  
          title = "Error!",  
          message = "Selected file is unable to copy to the selected location. Please try again!"  
@@ -73,21 +72,25 @@ def generateInsights():
         total_files += 1
         total_size += os.path.getsize(file)
         file_type = os.path.splitext(file)[1]
-        if file_type not in file_types.keys():
-            file_types[file_type] = 1
-            files_sizes[file_type] = os.path.getsize(file)
-        else:
-            files_sizes[file_type] += os.path.getsize(file)
-            file_types[file_type] += 1
+        if file_type != "":
+         if file_type not in file_types.keys():
+               file_types[file_type] = 1
+               files_sizes[file_type] = os.path.getsize(file)
+         else:
+               files_sizes[file_type] += os.path.getsize(file)
+               file_types[file_type] += 1
     #Generate bar graph using matplotlib and tkinter
     file_types = dict(sorted(file_types.items(), key=lambda x: x[1], reverse=True))
     file_types2 = file_types.copy()
     file_types = dict(list(file_types.items())[:10])
     file_types["Others"] = sum(list(file_types2.values())[10:])
-    
+    #Add y value on top of each bar
     fig1 = plt.figure(figsize=(5,5))
     ax1 = fig1.add_subplot(111)
     ax1.bar(file_types.keys(), file_types.values())
+    for i, v in enumerate(file_types.values()):
+      ax1.text(i - 0.25, v + 0.01, str(v))
+
     ax1.set_title("Number of Files per File Type")
     fig1.show()
     print("Total number of files: ", total_files)
@@ -111,6 +114,13 @@ def generateInsights():
     for file_type, number_of_files in file_types.items():
         display_text = display_text + "\n" + file_type + ": " + str(number_of_files)
     # using the showinfo() method to display success message
+    T=Text(win_root,height=10,width=30)
+    l=Label(win_root,text="Insights generated!")
+    b2 = Button(win_root, text = "Exit",command = win_root.destroy)
+    l.pack()
+    T.pack()
+    T.insert(END, "Total number of files: " + str(total_files) + "\n" + "Total size of files: " + str(format_size(total_size)) + " bytes" + "\n" + "File types and number of files of each type: " + "\n" + str(display_text))
+    b2.pack()
 
     mb.showinfo(
         title = "Insights generated!",
@@ -134,7 +144,62 @@ def deleteFile():
    os.remove(os.path.abspath(the_file))  
    # displaying the success message using the messagebox's showinfo() method  
    mb.showinfo(title = "File deleted!", message = "The selected file has been deleted.")  
-  
+
+
+#Function to delete files of a particular type using os.scandir() method
+def select_extension():
+   select_extension_window = Toplevel(win_root)
+   select_extension_window.title("Select Extension")
+   select_extension_window.geometry("300x100+300+250")
+   select_extension_window.resizable(0, 0)
+   select_extension_window.configure(bg = "#F6EAD7")
+
+   select_extension_label = Label(
+      select_extension_window,
+      text = "Enter the extension:",
+      font = ("verdana", "8"),
+      bg = "#F6EAD7",
+      fg = "#000000"
+      )
+   select_extension_label.pack(pady = 4)
+
+   select_extension_field = Entry(
+      select_extension_window,
+      width = 26,
+      textvariable = enteredExtension,
+      relief = GROOVE,
+      font = ("verdana", "10"),
+      bg = "#FFFFFF",
+      fg = "#000000"
+      )
+   select_extension_field.pack(pady = 4, padx = 4)
+
+   submitButton = Button(
+      select_extension_window,
+      text = "Submit",
+      command = delete_extension,
+      width = 12,
+      relief = GROOVE,
+      font = ("verdana", "8"),
+      bg = "#C8F25D",
+      fg = "#000000",
+      activebackground = "#709218",
+      activeforeground = "#FFFFFF"
+      )
+   submitButton.pack(pady = 2)
+
+def delete_extension():
+   file_type=enteredExtension.get()
+   directory = fd.askdirectory(title="Select the folder to delete files of type: " + file_type)
+   all_files = generateInsightsUsingScandir(directory)
+   deleted_files = 0
+   ext_name_size = file_type.__len__()
+   for file in all_files:
+      if file_type == file[-ext_name_size:]:
+         os.remove(os.path.abspath(file))
+         deleted_files += 1
+   mb.showinfo(title = "Deletion Complete", message = "Deleted " + str(deleted_files) + " files of type: " + file_type + ".")
+   
 # function to rename a file  
 def renameFile():  
    # creating another window  
@@ -1007,14 +1072,27 @@ if __name__ == "__main__":
         activeforeground = "#D0FEF7",
         command = generateInsights
     )
+   delete_files_of_type_button = Button(
+        buttons_frame,
+        text = "Delete Files of Type",
+        font = ("verdana", "10"),
+        width = 18,
+        bg = "#6AD9C7",
+        fg = "#000000",
+        relief = GROOVE,
+        activebackground = "#286F63",
+        activeforeground = "#D0FEF7",
+        command = select_extension
+      )
+
    # using the pack() method to place the buttons in the window  
    #open_button.pack(pady = 8)  
-   copy_button.pack(pady = 8)  
-   #delete_button.pack(pady = 8)  
-   rename_button.pack(pady = 8)  
-   open_folder_button.pack(pady = 8)  
-   delete_folder_button.pack(pady = 8)  
-   move_folder_button.pack(pady = 8)  
+   # copy_button.pack(pady = 8)  
+   # #delete_button.pack(pady = 8)  
+   # rename_button.pack(pady = 8)  
+   # open_folder_button.pack(pady = 8)  
+   # delete_folder_button.pack(pady = 8)  
+   # move_folder_button.pack(pady = 8)  
    list_button.pack(pady = 8)  
    disk_space_usage.pack(pady=8)
    show_space_usage.pack(pady=8)
@@ -1024,9 +1102,11 @@ if __name__ == "__main__":
    search_extension_button.pack(pady = 8)
    search_largefile_button.pack(pady = 8)
    filtered_search_button.pack(pady = 8)
+   delete_files_of_type_button.pack(pady = 8)
    # creating an object of the StringVar() class  
    enteredFileName = StringVar()  
    enteredExtension = StringVar()
+   
 
    # running the window  
    win_root.mainloop()  
