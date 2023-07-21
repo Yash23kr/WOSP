@@ -5,6 +5,7 @@ from tkinter import filedialog as fd    # importing the filedialog module from t
 import os                               # importing the os module  
 import shutil                           # importing the shutil module  
 import hashlib
+import time
 #Test
 # ----------------- defining functions -----------------  
 # function to open a file  
@@ -276,37 +277,59 @@ def search_by_extension():
    # creating another window  
    rename_window = Toplevel(win_root)  
    # setting the title  
-   rename_window.title("Rename File")  
+   rename_window.title("Enter extension")  
    # setting the size and position of the window  
-   rename_window.geometry("300x100+300+250")  
+   rename_window.geometry("300x300+300+250")  
    # disabling the resizable option  
    rename_window.resizable(0, 0)  
    # setting the background color of the window to #F6EAD7  
    rename_window.configure(bg = "#F6EAD7")  
      
    # creating a label  
-   rename_label = Label(  
+   size_label = Label(  
       rename_window,  
-      text = "Enter the extension name:",  
+      text = "Enter the size:(in MBs)",  
       font = ("verdana", "8"),  
       bg = "#F6EAD7",  
       fg = "#000000"  
       )  
    # placing the label on the window  
-   rename_label.pack(pady = 4)  
+   size_label.pack(pady = 4)  
      
    # creating an entry field  
-   rename_field = Entry(  
+   size_field = Entry(  
       rename_window,  
       width = 26,  
-      textvariable = enteredFileName,  
+      #IntVar = enteredSize, 
+      textvariable = enteredFileName, 
       relief = GROOVE,  
       font = ("verdana", "10"),  
       bg = "#FFFFFF",  
       fg = "#000000"  
       )  
+   size_field.pack(pady = 4, padx = 4)  
+   extension_label = Label(  
+      rename_window,  
+      text = "Enter the extensions:(comma seperated)",  
+      font = ("verdana", "8"),  
+      bg = "#F6EAD7",  
+      fg = "#000000"  
+      ) 
+   
+   extension_label.pack(pady=4)
+
+   extension_field = Entry(  
+      rename_window,  
+      width = 26,  
+      textvariable = enteredExtension,  
+      relief = GROOVE,  
+      font = ("verdana", "10"),  
+      bg = "#FFFFFF",  
+      fg = "#000000"  
+      )
+   extension_field.pack(pady=4) 
    # placing the entry field on the window  
-   rename_field.pack(pady = 4, padx = 4)  
+   
   
    # creating a button  
    submitButton = Button(  
@@ -334,18 +357,35 @@ def getFolder():
 # defining a function that will be called when submit button is clicked  
 def submitName2():  
    # getting the entered name from the entry field  
-   renameName = enteredFileName.get()  
+   size = enteredFileName.get()
+   if(size == ""):
+      size = 0
+   size = float(size)
+   size = size*1024*1024
    # setting the entry field to empty string  
    enteredFileName.set("")  
-   # calling the getFilePath() function  
+   # calling the getFilePath() function
+   extension = enteredExtension.get()
+   enteredExtension.set("")
+   extension = extension.split(",")
    folder = getFolder()  
    walker = os.walk(folder)
-   res = []
+   arr = []
+   arr2 = []
    for root, dirs, files in walker:
       for file in files:
-         if file.endswith(renameName):
-            res.append(file)
-   print(res)
+         res = len(extension) == 0
+         for ext in extension:
+            if(file.endswith(ext)):
+               res = True
+               break
+         if not res:
+            continue
+         file_path = Path(os.path.join(root,file))
+         if(file_path.stat().st_size >= size):
+            arr.append(file)
+            arr2.append(file_path.stat().st_size/(1024*1024))
+   #print(res)
    # creating an object of Toplevel class  
    listFilesWindow = Toplevel(win_root)  
    # specifying the title of the pop-up window  
@@ -379,12 +419,12 @@ def submitName2():
    the_listbox.config(yscrollcommand = the_scrollbar.set)  
    i=0
    # iterating through the files in the folder  
-   while i < len(res):  
+   while i < len(arr):  
       # using the insert() method to insert the file details in the list box  
-      the_listbox.insert(END, "[" + str(i+1) + "] " + str(res[i]))  
+      the_listbox.insert(END, "[" + str(i+1) + "] " + str(arr[i]) + ", " + '%.2f' % arr2[i] + " MBs")  
       i += 1  
    the_listbox.insert(END, "")  
-   the_listbox.insert(END, "Total Files: " + str(len(res))) 
+   the_listbox.insert(END, "Total Files: " + str(len(arr))) 
    
 def searchLargeFiles():
    folder = fd.askdirectory(title="Select a folder to search for large files")
@@ -394,6 +434,8 @@ def searchLargeFiles():
    for root, dirs, files in walker:
       for file in files:
          file_path = Path(os.path.join(root,file))
+         osobj=os.path.getmtime(file_path)
+         print(time.ctime(osobj))
          if file_path.stat().st_size > 100000000:
             largefiles.append(file)
             size.append(file_path.stat().st_size/(1024*1024))
@@ -429,9 +471,9 @@ def searchLargeFiles():
    the_listbox.config(yscrollcommand = the_scrollbar.set)  
    i=0
    # iterating through the files in the folder  
-   while i < len(files):  
+   while i < len(largefiles):  
       # using the insert() method to insert the file details in the list box  
-      the_listbox.insert(END, "[" + str(i+1) + "] " + str(largefiles[i] + ", " + str(size[i]) + " MBs"))  
+      the_listbox.insert(END, "[" + str(i+1) + "] " + largefiles[i] + ", " + str(size[i]) + " MBs")  
       i += 1  
    the_listbox.insert(END, "")  
    the_listbox.insert(END, "Total Files: " + str(len(files))) 
@@ -634,5 +676,6 @@ if __name__ == "__main__":
    # creating an object of the StringVar() class  
    enteredFileName = StringVar()  
    enteredExtension = StringVar()
+   enteredSize = IntVar()
    # running the window  
    win_root.mainloop()  
