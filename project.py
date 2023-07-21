@@ -4,7 +4,7 @@ from tkinter import messagebox as mb    # importing the messagebox module from t
 from tkinter import filedialog as fd    # importing the filedialog module from tkinter  
 import os                               # importing the os module  
 import shutil                           # importing the shutil module  
-import psutil
+import subprocess
   
 # ----------------- defining functions -----------------  
 # function to open a file  
@@ -215,19 +215,6 @@ def listFilesInFolder():
       i += 1  
    the_listbox.insert(END, "")  
    the_listbox.insert(END, "Total Files: " + str(len(the_files)))  
-  
-
-def get_size(start_path):
-    total_size = 0
-    for dirpath, dirnames, filenames in os.walk(start_path):
-        for f in filenames:
-            fp = os.path.join(dirpath, f)
-            # skip if it is symbolic link
-            if not os.path.islink(fp):
-                total_size += os.path.getsize(fp)
-
-    return total_size
-
 
 
 def free_space_on_disk():
@@ -270,6 +257,7 @@ def free_space_on_disk():
    total = total / (2**30)
    used = used / (2**30)
    free = free / (2**30)
+   used=total-free
 
    the_listbox.insert(END,f"Total : {total} GB")
    the_listbox.insert(END,f"Used : {used} GB")
@@ -283,9 +271,15 @@ def show_space_used():
 
    the_path = fd.askdirectory(title = "Select Folder to check the size of") 
 
-   folder_space_usage=get_size(str(the_path))
+   # folder_space_usage=get_size(str(the_path))
 
-   folder_space_usage = (folder_space_usage / (10**9))
+   ret = subprocess.run(["du","-sh",f"{the_path}"],capture_output=True, text=True, check=True)
+   ret1=ret.stdout.strip().split('\t')
+   ret=ret1[0]
+   ret=ret[:-1]
+   # print(ret)
+
+   # folder_space_usage = (folder_space_usage / (2**30))
    # print(the_path)
    # print(folder_space_usage / (2**30))
 
@@ -322,7 +316,7 @@ def show_space_used():
    # setting the yscrollcommand parameter of the listbox's config() method to the scrollbar  
    the_listbox.config(yscrollcommand = the_scrollbar.set)  
 
-   the_listbox.insert(END,f"Space Utilisation : {folder_space_usage} GB")
+   the_listbox.insert(END,f"Space Utilisation : {ret} GB")
 
 
 
@@ -331,7 +325,7 @@ if __name__ == "__main__":
    # creating an object of the Tk() class  
    win_root = Tk()  
    # setting the title of the main window  
-   win_root.title("File Explorer - JAVATPOINT")  
+   win_root.title("Wizard Of Systems Programming")  
    # set the size and position of the window  
    win_root.geometry("500x600+650+250")  
    # disabling the resizable option  
