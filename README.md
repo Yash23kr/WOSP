@@ -1,5 +1,6 @@
 # WOSP
-Testing Repo settings
+Instructions for Usage:
+
 
 References:
 (1) https://www.javatpoint.com/file-explorer-using-tkinter-in-python
