@@ -712,6 +712,7 @@ def submitName3():
    all_files = list_all_files(folder)
    arr = []
    arr2 = []
+   paths = []
    for file in all_files:
          res = len(extension) == 0
          for ext in extension:
@@ -722,7 +723,9 @@ def submitName3():
             continue
          file_path = Path(file)
          if(file_path.stat().st_size >= size):
-            arr.append(file)
+            temp=file.split("\\")
+            arr.append(temp[-1])
+            paths.append(file_path)
             arr2.append(format_size(file_path.stat().st_size))
    if len(arr) == 0:
       mb.showinfo(title = "No files found!", message = "No files found in the selected folder with the given filters.")
@@ -754,7 +757,7 @@ def submitName3():
       i=0 
       while i < len(arr):  
          # using the insert() method to insert the file details in the list box  
-         the_listbox.insert(END, "[" + str(i+1) + "] " + str(arr[i]) + ", " +  arr2[i])  
+         the_listbox.insert(END, "[" + str(i+1) + "] " + str(arr[i]) + " (size: " +  arr2[i] + ") (path: " + str(paths[i]) + ")")
          i += 1  
       the_listbox.insert(END, "")  
       the_listbox.insert(END, "Total Files: " + str(len(arr)))
