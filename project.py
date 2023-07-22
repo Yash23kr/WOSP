@@ -1,10 +1,10 @@
 # importing the required modules  
 import tkinter as tk
-from tkinter import *                   # importing all the widgets and modules from tkinter  
-from tkinter import messagebox as mb    # importing the messagebox module from tkinter  
-from tkinter import filedialog as fd    # importing the filedialog module from tkinter  
-import os                               # importing the os module  
-import shutil                           # importing the shutil module  
+from tkinter import *                     
+from tkinter import messagebox as mb     
+from tkinter import filedialog as fd     
+import os                                 
+import shutil                             
 import subprocess
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
@@ -12,8 +12,7 @@ from tkinter import ttk
 import pandas
 from pathlib import Path
 import hashlib
-import time
-# ----------------- defining functions -----------------  
+import time 
 # function to open a file  
 def openFile():  
    # selecting the file using the askopenfilename() method of filedialog  
@@ -21,7 +20,6 @@ def openFile():
       title = "Select a file of any type",  
       filetypes = [("All files", "*.*")]  
       )  
-   # opening a file using the startfile() method of the os module 
    opener = "xdg-open"
    subprocess.call([opener, the_file]) 
    # os.startfile(os.path.abspath(the_file))  
@@ -32,16 +30,13 @@ def copyFile():
    fileToCopy = fd.askopenfilename(  
       title = "Select a file to copy",  
       filetypes=[("All files", "*.*")]  
-      )  
-   # using the filedialog's askdirectory() method to select the directory  
+      )   
    directoryToPaste = fd.askdirectory(title = "Select the folder to paste the file")  
   
    # using the try-except method  
    try:  
       # using the copy() method of the shutil module to  
-      # paste the select file to the desired directory  
       shutil.copy(fileToCopy, directoryToPaste)  
-      # showing success message using the messagebox's showinfo() method  
       mb.showinfo(  
          title = "File copied!",  
          message = "The selected file has been copied to the selected location."  
@@ -139,14 +134,11 @@ def format_size(size):
         size /= 1024.0 
 # function to delete a file  
 def deleteFile():  
-   # selecting the file using the filedialog's askopenfilename() method  
    the_file = fd.askopenfilename(  
       title = "Choose a file to delete",  
       filetypes = [("All files", "*.*")]  
-      )  
-   # deleting the file using the remove() method of the os module  
-   os.remove(os.path.abspath(the_file))  
-   # displaying the success message using the messagebox's showinfo() method  
+      )   
+   os.remove(os.path.abspath(the_file))   
    mb.showinfo(title = "File deleted!", message = "The selected file has been deleted.")  
 
 
@@ -205,16 +197,11 @@ def delete_extension():
    mb.showinfo(title = "Deletion Complete", message = "Deleted " + str(deleted_files) + " files of type: " + file_type + ".")
    
 # function to rename a file  
-def renameFile():  
-   # creating another window  
+def renameFile():   
    rename_window = Toplevel(win_root)  
-   # setting the title  
-   rename_window.title("Rename File")  
-   # setting the size and position of the window  
+   rename_window.title("Rename File")   
    rename_window.geometry("1000x300+300+250")  
-   # disabling the resizable option  
-   rename_window.resizable(0, 0)  
-   # setting the background color of the window to #F6EAD7  
+   rename_window.resizable(0, 0)   
    rename_window.configure(bg = "#F6EAD7")  
      
    # creating a label  
@@ -224,8 +211,7 @@ def renameFile():
       font = ("verdana", "8"),  
       bg = "#F6EAD7",  
       fg = "#000000"  
-      )  
-   # placing the label on the window  
+      )   
    rename_label.pack(pady = 4)  
      
    # creating an entry field  
@@ -238,7 +224,6 @@ def renameFile():
       bg = "#FFFFFF",  
       fg = "#000000"  
       )  
-   # placing the entry field on the window  
    rename_field.pack(pady = 4, padx = 4)  
   
    # creating a button  
@@ -253,66 +238,44 @@ def renameFile():
       fg = "#000000",  
       activebackground = "#709218",  
       activeforeground = "#FFFFFF"  
-      )  
-   # placing the button on the window  
+      )   
    submitButton.pack(pady = 2)  
   
 # defining a function get the file path  
-def getFilePath():  
-   # selecting the file using the filedialog's askopenfilename() method  
+def getFilePath():   
    the_file = fd.askopenfilename(title = "Select the file to rename", filetypes = [("All files", "*.*")])  
-   # returning the file path  
    return the_file  
   
 # defining a function that will be called when submit button is clicked  
 def submitName():  
-   # getting the entered name from the entry field  
    renameName = enteredFileName.get()  
-   # setting the entry field to empty string  
-   enteredFileName.set("")  
-   # calling the getFilePath() function  
-   fileName = getFilePath()  
-   # creating a new file name for the file  
-   newFileName = os.path.join(os.path.dirname(fileName), renameName + os.path.splitext(fileName)[1])  
-   # using the rename() method to rename the file  
-   os.rename(fileName, newFileName)  
-   # using the showinfo() method to display a message box to show the success message  
+   enteredFileName.set("")   
+   fileName = getFilePath()   
+   newFileName = os.path.join(os.path.dirname(fileName), renameName + os.path.splitext(fileName)[1])   
+   os.rename(fileName, newFileName)   
    mb.showinfo(title = "File Renamed!", message = "The selected file has been renamed.")  
      
 # defining a function to open a folder  
-def openFolder():  
-   # using the filedialog's askdirectory() method to select the folder  
-   the_folder = fd.askdirectory(title = "Select Folder to open")  
-   # using the startfile() of the os module to open the selected folder  
+def openFolder():    
+   the_folder = fd.askdirectory(title = "Select Folder to open")   
    subprocess.run(['nautilus',f'{the_folder}'])
    # os.startfile(the_folder)  
   
 # defining a function to delete the folder  
 def deleteFolder():  
-   # using the filedialog's askdirectory() method to select the folder  
    folderToDelete = fd.askdirectory(title = 'Select Folder to delete')  
-   # using the rmdir() method of the os module to delete the selected folder  
    os.rmdir(folderToDelete)  
-   # displaying a success message using the showinfo() method  
    mb.showinfo("Folder Deleted!", "The selected folder has been deleted!")  
   
 # defining a function to move the folder  
-def moveFolder():  
-   # using the askdirectory() method to select the folder  
+def moveFolder():   
    folderToMove = fd.askdirectory(title = 'Select the folder you want to move')  
-   # using the showinfo() method to dislay  
    mb.showinfo(message = 'Folder has been selected to move. Now, select the desired destination.')  
-   # using the askdirectory() method to select the destination  
    des = fd.askdirectory(title = 'Destination')  
-  
-   #using the try-except method  
    try:  
-      # using the move() method of the shutil module to move the folder to the requested location  
-      shutil.move(folderToMove, des)  
-      # displaying the success message using the messagebox's showinfo() method  
+      shutil.move(folderToMove, des)   
       mb.showinfo("Folder moved!", 'The selected folder has been moved to the desired Location')  
-   except:  
-      # displaying the failure message using the messagebox's showerror() method  
+   except:   
       mb.showerror('Error!', 'The Folder cannot be moved. Make sure that the destination exists')  
   
 # defining a function to list all the files available in a folder  
@@ -582,14 +545,15 @@ def getFolder():
 # defining a function that will be called when submit button is clicked  
 def submitName2():   
    renameName = enteredExtension.get()  
-   enteredFileName.set("")   
+   enteredExtension.set("")   
    folder = getFolder()  
    all_files = list_all_files(folder)
    res = []
    filepaths = []
    for file in all_files:
       if file.endswith(renameName):
-         res.append(file)
+         temp=file.split("\\")
+         res.append(temp[-1])
          filepaths.append(Path(file))
    if len(res) == 0:
       mb.showinfo(title = "No files found!", message = "No files found in the selected folder with the given extension.")
@@ -627,10 +591,13 @@ def searchLargeFiles():
    all_files = list_all_files(folder)
    largefiles = []
    size = []
+   paths = []
    for file in all_files:
       file_path = Path(file)
       if file_path.stat().st_size > 100*1024*1024:
-         largefiles.append(file)
+         temp=file.split("\\")
+         largefiles.append(temp[-1])
+         paths.append(file_path)
          size.append(format_size(file_path.stat().st_size))
    if len(largefiles) == 0:
       mb.showinfo(title = "No large files found!", message = "No large files found in the selected folder.")
@@ -659,7 +626,7 @@ def searchLargeFiles():
       the_listbox.config(yscrollcommand = the_scrollbar.set)  
       i=0
       while i < len(largefiles):  
-         the_listbox.insert(END, "[" + str(i+1) + "] " + str(largefiles[i]) + " (size: " + str(size[i]) + ")")
+         the_listbox.insert(END, "[" + str(i+1) + "] " + str(largefiles[i]) + " (size: " + str(size[i]) + ")" + " (path: " + str(paths[i]) + ")")
          i += 1  
       the_listbox.insert(END, "")  
       the_listbox.insert(END, "Total Files: " + str(len(largefiles))) 
@@ -799,13 +766,9 @@ def least_accessed_files():
    if type(the_path) is tuple:
       return
    ShowLeastAccessedFiles = Toplevel(win_root)  
-   # specifying the title of the pop-up window  
    ShowLeastAccessedFiles.title(f'Least Accessed files in {the_path}')  
-   # specifying the size and position of the window  
-   ShowLeastAccessedFiles.geometry("1000x800+100+100")  
-   # disabling the resizable option  
-   ShowLeastAccessedFiles.resizable(1, 1)  
-   # setting the background color of the window to #EC2FB1  
+   ShowLeastAccessedFiles.geometry("1000x800+100+100")   
+   ShowLeastAccessedFiles.resizable(1, 1)    
    ShowLeastAccessedFiles.configure(bg = "#FCFFB2")  
   
    tree = ttk.Treeview(ShowLeastAccessedFiles)
@@ -847,14 +810,10 @@ def least_accessed_files():
    # print(lisn)
    tree.pack()
 
-if __name__ == "__main__":  
-   # creating an object of the Tk() class  
-   win_root = Tk()  
-   # setting the title of the main window  
+if __name__ == "__main__":   
+   win_root = Tk()   
    win_root.title("Wizard Of Systems Programming")  
-   # set the size and position of the window  
-   #win_root.geometry("500x700+650+250")  
-   # disabling the resizable option  
+   #win_root.geometry("500x700+650+250") 
    win_root.resizable(1, 1) 
    width = win_root.winfo_screenwidth()  # Getting the height and width of the screen
    height = win_root.winfo_screenheight() 
