@@ -451,7 +451,7 @@ def deleteDuplicates():
          second = file_path
          tic1 = time.ctime(os.path.getctime(first))
          tic2 = time.ctime(os.path.getctime(second))
-         if(tic1 < tic2):
+         if(tic1 > tic2):
             duplicates.append(first)
             os.remove(first)
             hash_dictionary[hash] = second
