@@ -19,3 +19,9 @@ pip install -r requirements.txt
 
 Start the file manager:
 python3 project.py
+
+
+
+References:
+(1) https://www.javatpoint.com/file-explorer-using-tkinter-in-python
+(2) https://docs.python.org/3/library/tkinter.html
