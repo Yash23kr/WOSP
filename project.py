@@ -190,10 +190,24 @@ def delete_extension():
    all_files = list_all_files(directory)
    deleted_files = 0
    ext_name_size = file_type.__len__()
+   #Provide a warning box and ask for Yes or No confirmation
+
+   
+   to_be_deleted = []
    for file in all_files:
       if file_type == file[-ext_name_size:]:
-         os.remove(os.path.abspath(file))
+         to_be_deleted.append(file)
          deleted_files += 1
+
+   if deleted_files == 0:
+      mb.showinfo(title = "No files found!", message = "No files found in the selected folder with the given extension.")
+      return
+   answer = mb.askyesno(title='Confirm Deletion', message='Are you sure you want to delete all files of type: ' + file_type + '?')
+   if answer == False:
+      return
+   for file in to_be_deleted:
+      os.remove(file)
+
    mb.showinfo(title = "Deletion Complete", message = "Deleted " + str(deleted_files) + " files of type: " + file_type + ".")
    
 # function to rename a file  
@@ -263,7 +277,10 @@ def openFolder():
   
 # defining a function to delete the folder  
 def deleteFolder():  
-   folderToDelete = fd.askdirectory(title = 'Select Folder to delete')  
+   folderToDelete = fd.askdirectory(title = 'Select Folder to delete') 
+   answer = mb.askyesno(title='Confirm Deletion', message='Are you sure you want to delete the selected folder?')
+   if answer == False:
+      return
    os.rmdir(folderToDelete)  
    mb.showinfo("Folder Deleted!", "The selected folder has been deleted!")  
   
@@ -465,6 +482,11 @@ def deleteDuplicates():
    if len(duplicates) == 0:
       mb.showinfo(title = "No duplicates found!", message = "No duplicates found in the selected folder.")
    else:
+      answer = mb.askyesno(title='Confirm Deletion', message='Are you sure you want to delete all duplicates?')
+      if answer == False:
+         return
+      
+
       # creating an object of Toplevel class  
       listFilesWindow = Toplevel(win_root)  
       listFilesWindow.title(f'Following duplicates deleted {parent_folder}')  
@@ -544,7 +566,7 @@ def getFolder():
   
 # defining a function that will be called when submit button is clicked  
 def submitName2():   
-   renameName = enteredExtension.get()  
+   renameName = enteredExtension.get() 
    enteredExtension.set("")   
    folder = getFolder()  
    all_files = list_all_files(folder)
